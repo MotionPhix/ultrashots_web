@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
 
             // 5. Create logos/downloads
-            LogoSeeder::class,
+            // LogoSeeder::class,
 
             // 6. Create subscribers
             SubscriberSeeder::class,

@@ -15,6 +15,11 @@ import { renderApp } from '@inertiaui/modal-vue';
 
 // ApexCharts
 import VueApexCharts from 'vue3-apexcharts';
+import { configureEcho } from '@laravel/echo-vue';
+
+configureEcho({
+    broadcaster: 'pusher',
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Ultrahots';
 
