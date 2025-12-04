@@ -81,7 +81,7 @@ const navigationItems = [
             <!-- Active indicator -->
             <span
               v-if="item.current()"
-              class="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-primary/0 via-primary/40 to-primary/0"
+              class="absolute inset-x-0 -bottom-px h-px bg-linear-to-r from-primary/0 via-primary/40 to-primary/0"
             />
           </Link>
         </nav>

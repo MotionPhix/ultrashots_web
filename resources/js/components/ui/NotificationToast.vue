@@ -107,7 +107,7 @@ onMounted(() => {
       <div class="p-4">
         <div class="flex items-start">
           <!-- Icon -->
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <component
               :is="config.icon"
               :class="['w-5 h-5', config.iconColor]"
@@ -151,7 +151,7 @@ onMounted(() => {
           </div>
 
           <!-- Close button -->
-          <div class="ml-4 flex-shrink-0 flex">
+          <div class="ml-4 shrink-0 flex">
             <button
               @click="remove"
               class="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-md"

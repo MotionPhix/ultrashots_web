@@ -1,22 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-  IconBrandBehance,
-  IconBrandLinkedin,
-  IconBrandX,
-  IconMapPin,
-  IconDownload,
-  IconArrowRight,
-  IconStar,
-  IconUsers,
-  IconBriefcase,
-  IconArrowDown,
-  IconCode,
-  IconPalette,
-  IconRocket,
-  IconEye
-} from '@tabler/icons-vue';
 import Projects from '@/components/front/Projects.vue';
 import Skills from '@/components/front/Skills.vue';
 import Expertise from '@/components/front/Expertise.vue';
@@ -283,7 +267,7 @@ defineOptions({layout: AppLayout});
     <!-- Subtle background -->
     <div class="absolute inset-0">
       <div class="absolute inset-0 bg-grid-pattern opacity-[0.03] dark:opacity-[0.05]"></div>
-      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent"></div>
+      <div class="absolute inset-0 bg-linear-to-b from-transparent via-primary/5 to-transparent"></div>
     </div>
 
     <!-- Main content -->
@@ -328,7 +312,7 @@ defineOptions({layout: AppLayout});
                 <IconArrowRight class="size-5 transition-transform group-hover:translate-x-1" />
               </span>
 
-              <div class="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div class="absolute inset-0 bg-linear-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
 
             <a
@@ -357,7 +341,7 @@ defineOptions({layout: AppLayout});
 
         <!-- Profile Image Side -->
         <div class="relative mb-8 md:mb-0 order-1 sm:order-2">
-          <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-2xl"></div>
+          <div class="absolute inset-0 bg-linear-to-r from-primary/20 to-secondary/20 rounded-full blur-2xl"></div>
           <Avatar
             class="relative rounded-2xl sm:rounded-3xl size-32 sm:size-64 md:size-72 ring-4 ring-background shadow-2xl">
             <AvatarImage :src="avatarUrl" :alt="fullName" />
@@ -371,7 +355,7 @@ defineOptions({layout: AppLayout});
   <!-- About Section -->
   <section class="py-20 bg-muted/30 overflow-x-hidden">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-12 md:grid-cols-[1fr,2fr] items-start">
+      <div class="grid gap-12 md:grid-cols-[1fr_2fr] items-start">
         <!-- Stats -->
         <div class="grid grid-cols-2 gap-4">
           <div

@@ -443,7 +443,7 @@ const dismissNotification = (index: number) => {
       <!-- Customers -->
       <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
               <IconUsers class="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
@@ -470,7 +470,7 @@ const dismissNotification = (index: number) => {
       <!-- Projects -->
       <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
               <IconFolders class="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
@@ -497,7 +497,7 @@ const dismissNotification = (index: number) => {
       <!-- Downloads -->
       <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
               <IconDownload class="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
@@ -512,7 +512,7 @@ const dismissNotification = (index: number) => {
       <!-- Subscribers -->
       <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
               <IconMail class="w-6 h-6 text-orange-600 dark:text-orange-400" />
             </div>
@@ -727,7 +727,7 @@ const dismissNotification = (index: number) => {
             :key="`${activity.type}-${activity.title}`"
             class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             <div :class="[
-              'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
+              'shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
               activity.color === 'blue' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
             ]">
               <IconActivity class="w-5 h-5" />
@@ -736,7 +736,7 @@ const dismissNotification = (index: number) => {
               <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ activity.title }}</p>
               <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ activity.subtitle }}</p>
             </div>
-            <div class="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
+            <div class="shrink-0 text-xs text-gray-500 dark:text-gray-400">
               {{ activity.time }}
             </div>
           </div>
@@ -753,7 +753,7 @@ const dismissNotification = (index: number) => {
             :href="route(action.route)"
             class="flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
             <div :class="[
-              'flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors',
+              'shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-3 transition-colors',
               `bg-${action.color}-100 dark:bg-${action.color}-900/30`,
               getIconColor(action.color)
             ]">
@@ -804,7 +804,7 @@ const dismissNotification = (index: number) => {
                 </span>
               </div>
             </div>
-            <div class="flex-shrink-0 ml-4">
+            <div class="shrink-0 ml-4">
               <div class="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
                 <div
                   class="h-2 bg-blue-600 rounded-full transition-all duration-300"
@@ -835,14 +835,14 @@ const dismissNotification = (index: number) => {
             :key="customer.uuid"
             class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            <div class="flex-shrink-0 w-10 h-10 bg-blue-600 dark:bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+            <div class="shrink-0 w-10 h-10 bg-blue-600 dark:bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
               {{ customer.avatar }}
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ customer.name }}</p>
               <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ customer.company }}</p>
             </div>
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
               <span :class="['px-2 py-1 text-xs rounded-full', getStatusColor(customer.status)]">
                 {{ customer.status }}
               </span>

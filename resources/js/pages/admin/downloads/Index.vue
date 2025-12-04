@@ -348,17 +348,17 @@ watch(viewMode, () => {
 
   <div class="min-h-screen bg-background">
     <!-- Enhanced Header -->
-    <div ref="headerRef" class="bg-gradient-to-r from-background via-background to-background/95 border-b backdrop-blur-xl sticky top-0 z-40">
+    <div ref="headerRef" class="bg-linear-to-r from-background via-background to-background/95 border-b backdrop-blur-xl sticky top-0 z-40">
       <div class="mx-auto max-w-4xl px-4 py-6">
         <div class="flex lg:flex-row lg:items-center justify-between gap-6">
           <!-- Title Section -->
           <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20">
               <DownloadIcon class="h-6 w-6 text-primary" />
             </div>
 
             <div>
-              <h1 class="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h1 class="text-2xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Downloads Management
               </h1>
 
@@ -391,7 +391,7 @@ watch(viewMode, () => {
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card
           ref="el => statsRef[0] = el as HTMLElement"
-          class="relative overflow-hidden bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 dark:from-blue-950 dark:via-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 hover:shadow-lg transition-all duration-300 group">
+          class="relative overflow-hidden bg-linear-to-br from-blue-50 via-blue-50 to-blue-100 dark:from-blue-950 dark:via-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 hover:shadow-lg transition-all duration-300 group">
           <CardContent class="p-4">
             <div class="flex items-center justify-between">
               <div class="space-y-1">
@@ -410,13 +410,13 @@ watch(viewMode, () => {
               </div>
             </div>
 
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div class="absolute inset-0 bg-linear-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </CardContent>
         </Card>
 
         <Card
           ref="el => statsRef[1] = el as HTMLElement"
-          class="relative overflow-hidden bg-gradient-to-br from-green-50 via-green-50 to-green-100 dark:from-green-950 dark:via-green-950 dark:to-green-900 border-green-200 dark:border-green-800 hover:shadow-lg transition-all duration-300 group"
+          class="relative overflow-hidden bg-linear-to-br from-green-50 via-green-50 to-green-100 dark:from-green-950 dark:via-green-950 dark:to-green-900 border-green-200 dark:border-green-800 hover:shadow-lg transition-all duration-300 group"
         >
           <CardContent class="p-4">
             <div class="flex items-center justify-between">
@@ -434,13 +434,13 @@ watch(viewMode, () => {
                 <TrendingUp class="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div class="absolute inset-0 bg-linear-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </CardContent>
         </Card>
 
         <Card
           ref="el => statsRef[2] = el as HTMLElement"
-          class="relative overflow-hidden bg-gradient-to-br from-purple-50 via-purple-50 to-purple-100 dark:from-purple-950 dark:via-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800 hover:shadow-lg transition-all duration-300 group"
+          class="relative overflow-hidden bg-linear-to-br from-purple-50 via-purple-50 to-purple-100 dark:from-purple-950 dark:via-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800 hover:shadow-lg transition-all duration-300 group"
         >
           <CardContent class="p-4">
             <div class="flex items-center justify-between">
@@ -459,13 +459,13 @@ watch(viewMode, () => {
                 <Grid3X3 class="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div class="absolute inset-0 bg-linear-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </CardContent>
         </Card>
 
         <Card
           ref="el => statsRef[3] = el as HTMLElement"
-          class="relative overflow-hidden bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 dark:from-amber-950 dark:via-amber-950 dark:to-amber-900 border-amber-200 dark:border-amber-800 hover:shadow-lg transition-all duration-300 group"
+          class="relative overflow-hidden bg-linear-to-br from-amber-50 via-amber-50 to-amber-100 dark:from-amber-950 dark:via-amber-950 dark:to-amber-900 border-amber-200 dark:border-amber-800 hover:shadow-lg transition-all duration-300 group"
         >
           <CardContent class="p-4">
             <div class="flex items-center justify-between">
@@ -482,13 +482,13 @@ watch(viewMode, () => {
                 <Star class="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div class="absolute inset-0 bg-linear-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </CardContent>
         </Card>
       </div>
 
       <!-- Enhanced Filters and Controls -->
-      <Card class="mb-6 border-border/50 bg-card/50 backdrop-blur-sm">
+      <Card class="mb-6 bg-card/50 backdrop-blur-sm">
         <CardContent class="p-6">
           <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
             <!-- Search and Filters -->
@@ -499,7 +499,7 @@ watch(viewMode, () => {
                 <Input
                   v-model="searchQuery"
                   placeholder="Search downloads..."
-                  class="pl-10 bg-background/80 backdrop-blur-sm border-border/50 focus:border-primary/50 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  class="pl-10 bg-background/80 backdrop-blur-sm focus:border-primary/50 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                 />
                 <Button
                   v-if="searchQuery"
@@ -664,7 +664,7 @@ watch(viewMode, () => {
             v-for="(download, index) in downloads.data"
             :key="download.uuid"
             :ref="el => cardsRef[index] = el as HTMLElement"
-            class="group hover:shadow-xl transition-all duration-300 cursor-pointer border-border/50 hover:border-primary/30 bg-card hover:bg-card/80 overflow-hidden relative">
+            class="group hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-primary/30 bg-card hover:bg-card/80 overflow-hidden relative">
             <!-- Selection Checkbox -->
             <div class="absolute top-3 left-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300">
               <Checkbox
@@ -677,14 +677,14 @@ watch(viewMode, () => {
 
             <!-- Featured Badge -->
             <div v-if="download.is_featured" class="absolute top-3 right-3 z-10">
-              <Badge class="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 shadow-lg">
+              <Badge class="bg-linear-to-r from-amber-500 to-amber-600 text-white border-0 shadow-lg">
                 <Star class="w-3 h-3 mr-1 fill-current" />
                 Featured
               </Badge>
             </div>
 
             <!-- Enhanced Image Section -->
-            <div class="aspect-video relative overflow-hidden bg-gradient-to-br from-muted/50 to-muted">
+            <div class="aspect-video relative overflow-hidden bg-linear-to-br from-muted/50 to-muted">
               <img
                 v-if="download.poster_url"
                 :src="download.thumb_url || download.poster_url"
@@ -694,7 +694,7 @@ watch(viewMode, () => {
               />
               <div
                 v-else
-                class="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/80 to-muted"
+                class="w-full h-full flex items-center justify-center bg-linear-to-br from-muted/80 to-muted"
               >
                 <div class="text-center space-y-2">
                   <DownloadIcon class="w-12 h-12 text-muted-foreground mx-auto" />
@@ -703,7 +703,7 @@ watch(viewMode, () => {
               </div>
 
               <!-- Enhanced Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
+              <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
 
               <!-- File Type Badge -->
               <div class="absolute bottom-3 left-3">
@@ -797,10 +797,10 @@ watch(viewMode, () => {
         </div>
 
         <!-- Enhanced List View -->
-        <Card v-else class="bg-card border-border/50 overflow-hidden">
+        <Card v-else class="bg-card overflow-hidden">
           <CardContent class="p-0">
             <!-- Enhanced Header -->
-            <div class="flex items-center gap-4 p-4 border-b border-border/50 bg-muted/20">
+            <div class="flex items-center gap-4 p-4 border-b bg-muted/20">
               <Checkbox
                 :model-value="allSelected"
                 :indeterminate="someSelected"
@@ -837,7 +837,7 @@ watch(viewMode, () => {
                   <div class="col-span-4 flex items-center gap-3">
                     <Avatar class="w-12 h-12 rounded-lg ring-2 ring-primary/10 group-hover:ring-primary/20 transition-all duration-300">
                       <AvatarImage :src="download.thumb_url" :alt="download.title" class="object-cover" />
-                      <AvatarFallback class="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 text-primary">
+                      <AvatarFallback class="rounded-lg bg-linear-to-br from-primary/10 to-primary/5 text-primary">
                         <DownloadIcon class="w-5 h-5" />
                       </AvatarFallback>
                     </Avatar>
@@ -926,7 +926,7 @@ watch(viewMode, () => {
 
       <!-- Enhanced Empty State -->
       <div v-else class="text-center py-16">
-        <div class="mx-auto w-24 h-24 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mb-6 ring-8 ring-muted/20">
+        <div class="mx-auto w-24 h-24 bg-linear-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mb-6 ring-8 ring-muted/20">
           <DownloadIcon class="w-12 h-12 text-muted-foreground" />
         </div>
         <div class="space-y-3 max-w-md mx-auto">
@@ -956,7 +956,7 @@ watch(viewMode, () => {
 
       <!-- Enhanced Pagination -->
       <div v-if="downloads.data.length > 0 && downloads.last_page > 1" class="mt-8">
-        <Card class="border-border/50 bg-card/50">
+        <Card class= bg-card/50">
           <CardContent class="p-4">
             <div class="flex items-center justify-between">
               <div class="text-sm text-muted-foreground">
@@ -1043,7 +1043,7 @@ watch(viewMode, () => {
 }
 
 /* Enhanced gradient backgrounds */
-.bg-gradient-to-br {
+.bg-linear-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
 

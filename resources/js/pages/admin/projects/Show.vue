@@ -402,7 +402,7 @@ const getCustomerInitials = (customer: any) => {
                   :key="feature"
                   class="flex items-center"
                 >
-                  <CheckCircle2 class="h-4 w-4 mr-2 text-green-600 flex-shrink-0" />
+                  <CheckCircle2 class="h-4 w-4 mr-2 text-green-600 shrink-0" />
                   <span>{{ feature }}</span>
                 </li>
               </ul>
@@ -513,7 +513,7 @@ const getCustomerInitials = (customer: any) => {
                   </div>
 
                   <!-- Image info overlay -->
-                  <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <p class="text-white text-sm font-medium">{{ image.name }}</p>
                     <p class="text-white/80 text-xs">{{ formatFileSize(image.size) }}</p>
                   </div>

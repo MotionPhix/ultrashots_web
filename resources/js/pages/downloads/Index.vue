@@ -315,7 +315,7 @@ defineOptions({ layout: AppLayout });
 
   <div class="min-h-screen bg-background">
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+    <section class="relative overflow-hidden bg-linear-to-br from-background via-background to-muted/20">
       <div class="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02]" />
       <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
         <div ref="headerRef" class="text-center space-y-8">
@@ -326,7 +326,7 @@ defineOptions({ layout: AppLayout });
             </Badge>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight font-mono">
               Free resources & <br>
-              <span class="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <span class="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 digital assets
               </span>
             </h1>
@@ -383,7 +383,7 @@ defineOptions({ layout: AppLayout });
                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <Badge class="absolute top-3 left-3 bg-yellow-500/90 text-white">
                 <Star class="h-3 w-3 mr-1" />
                 Featured
@@ -576,7 +576,7 @@ defineOptions({ layout: AppLayout });
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                 />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <!-- Badges -->
                 <div class="absolute top-3 left-3 flex gap-2">

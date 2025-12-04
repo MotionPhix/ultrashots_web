@@ -313,10 +313,10 @@ const goToPage = (url: string) => {
 
         <!-- Stats Cards - Optimized for smaller container -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full lg:w-auto">
-          <Card class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800">
+          <Card class="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800">
             <CardContent class="p-3">
               <div class="flex items-center gap-2">
-                <IconUsers class="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <IconUsers class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
                 <div class="min-w-0">
                   <p class="text-xs font-medium text-blue-900 dark:text-blue-100">Total</p>
                   <p class="text-lg font-bold text-blue-900 dark:text-blue-100">
@@ -327,10 +327,10 @@ const goToPage = (url: string) => {
             </CardContent>
           </Card>
 
-          <Card class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800">
+          <Card class="bg-linear-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800">
             <CardContent class="p-3">
               <div class="flex items-center gap-2">
-                <IconUsers class="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <IconUsers class="w-4 h-4 text-green-600 dark:text-green-400 shrink-0" />
                 <div class="min-w-0">
                   <p class="text-xs font-medium text-green-900 dark:text-green-100">Active</p>
                   <p class="text-lg font-bold text-green-900 dark:text-green-100">
@@ -341,10 +341,10 @@ const goToPage = (url: string) => {
             </CardContent>
           </Card>
 
-          <Card class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800">
+          <Card class="bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800">
             <CardContent class="p-3">
               <div class="flex items-center gap-2">
-                <IconBriefcase class="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                <IconBriefcase class="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
                 <div class="min-w-0">
                   <p class="text-xs font-medium text-purple-900 dark:text-purple-100">Projects</p>
                   <p class="text-lg font-bold text-purple-900 dark:text-purple-100">
@@ -355,10 +355,10 @@ const goToPage = (url: string) => {
             </CardContent>
           </Card>
 
-          <Card class="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 border-amber-200 dark:border-amber-800">
+          <Card class="bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 border-amber-200 dark:border-amber-800">
             <CardContent class="p-3">
               <div class="flex items-center gap-2">
-                <IconTrendingUp class="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                <IconTrendingUp class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 <div class="min-w-0">
                   <p class="text-xs font-medium text-amber-900 dark:text-amber-100">Growth</p>
                   <p class="text-lg font-bold text-amber-900 dark:text-amber-100">
@@ -383,7 +383,7 @@ const goToPage = (url: string) => {
             <Input
               v-model="searchQuery"
               placeholder="Search customers..."
-              class="pl-10 bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50 transition-all duration-300"
+              class="pl-10 bg-background/50 backdrop-blur-sm /50 focus:border-primary/50 transition-all duration-300"
             />
           </div>
 
@@ -585,9 +585,9 @@ const goToPage = (url: string) => {
             v-for="(customer, index) in customers.data"
             :key="customer.uuid"
             :ref="el => cardsRef[index] = el as HTMLElement"
-            class="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 hover:border-primary/50 bg-card hover:bg-card/80"
-            :class="{ 'ring-2 ring-primary/50': isCustomerSelected(customer.uuid) }"
-            @click="toggleCustomerSelection(customer.uuid, $event)">
+            class="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-primary/50 bg-card hover:bg-card/80"
+            :class="{ 'ring-2 ring-primary/50': isCustomerSelected(customer.uuid!) }"
+            @click="toggleCustomerSelection(customer.uuid!, $event)">
             <CardHeader>
               <div class="flex items-start justify-between">
                 <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -597,13 +597,13 @@ const goToPage = (url: string) => {
                       class="w-12 h-12 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300 cursor-pointer">
                       <AvatarImage v-if="customer.avatar_url" :src="customer.avatar_url" />
                       <AvatarFallback>
-                        {{ isCustomerSelected(customer.uuid) ? '' : getInitials(customer) }}
+                        {{ isCustomerSelected(customer.uuid!) ? '' : getInitials(customer) }}
                       </AvatarFallback>
                     </Avatar>
 
                     <!-- Selection Indicator -->
                     <div
-                      v-if="isCustomerSelected(customer.uuid)"
+                      v-if="isCustomerSelected(customer.uuid!)"
                       class="absolute inset-0 bg-primary/20 rounded-full flex items-center justify-center">
                       <IconCheck class="w-6 h-6 text-primary" />
                     </div>
@@ -631,7 +631,7 @@ const goToPage = (url: string) => {
                   :variant="getCustomerStatus(customer) === 'active'
                   ? 'default' : getCustomerStatus(customer) === 'prospect'
                   ? 'outline' : 'secondary'"
-                  class="text-xs flex-shrink-0">
+                  class="text-xs shrink-0">
                   {{ getCustomerStatus(customer) }}
                 </Badge>
               </div>
@@ -641,17 +641,17 @@ const goToPage = (url: string) => {
               <!-- Contact Information -->
               <div class="space-y-2">
                 <div class="flex items-center gap-2 text-sm text-muted-foreground" v-if="customer.email">
-                  <IconMail class="w-4 h-4 flex-shrink-0" />
+                  <IconMail class="w-4 h-4 shrink-0" />
                   <span class="truncate">{{ customer.email }}</span>
                 </div>
 
                 <div class="flex items-center gap-2 text-sm text-muted-foreground" v-if="customer.phone_number">
-                  <IconPhone class="w-4 h-4 flex-shrink-0" />
+                  <IconPhone class="w-4 h-4 shrink-0" />
                   <span class="truncate">{{ customer.phone_number }}</span>
                 </div>
 
                 <div class="flex items-center gap-2 text-sm text-muted-foreground" v-if="customer.company_name">
-                  <IconBuilding class="w-4 h-4 flex-shrink-0" />
+                  <IconBuilding class="w-4 h-4 shrink-0" />
                   <span class="truncate">{{ customer.company_name }}</span>
                 </div>
               </div>
@@ -677,7 +677,7 @@ const goToPage = (url: string) => {
         </div>
 
         <!-- Enhanced List View -->
-        <Card v-else class="bg-card border-border/50">
+        <Card v-else class="bg-card">
           <CardContent class="p-0">
             <div class="divide-y divide-border/50">
               <div
@@ -724,7 +724,7 @@ const goToPage = (url: string) => {
                           :variant="getCustomerStatus(customer) === 'active'
                           ? 'default' : getCustomerStatus(customer) === 'prospect'
                           ? 'outline' : 'secondary'"
-                          class="capitalize text-xs flex-shrink-0">
+                          class="capitalize text-xs shrink-0">
                           {{ getCustomerStatus(customer) }}
                         </Badge>
                       </div>
@@ -753,7 +753,7 @@ const goToPage = (url: string) => {
                     </div>
                   </div>
 
-                  <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0">
+                  <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shrink-0">
                     <Link
                       :href="route('admin.customers.show', customer.uuid)"
                       as="button">

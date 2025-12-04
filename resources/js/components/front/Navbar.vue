@@ -12,7 +12,7 @@ import NavLinkMode from '@/components/NavLinkMode.vue';
     class="sticky inset-x-0 top-0 z-50 flex flex-wrap w-full md:justify-start md:flex-nowrap sm:text-sm">
 
     <nav
-      class="mt-4 relative max-w-2xl w-full bg-white border border-gray-200 rounded-[2rem] mx-2 py-2.5 md:flex md:items-center md:justify-between md:py-0 md:px-4 md:mx-auto dark:bg-neutral-900 dark:border-neutral-700">
+      class="mt-4 relative max-w-2xl w-full bg-white border border-gray-200 rounded-4xl mx-2 py-2.5 md:flex md:items-center md:justify-between md:py-0 md:px-4 md:mx-auto dark:bg-neutral-900 dark:border-neutral-700">
 
       <div class="flex items-center justify-between px-4 md:px-0">
         <!-- Logo -->

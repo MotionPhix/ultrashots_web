@@ -206,7 +206,7 @@ const handleFilter = () => {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div class="flex items-center">
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
               <TrendingUp class="h-8 w-8 text-blue-600"/>
             </div>
             <div class="ml-4">
@@ -218,7 +218,7 @@ const handleFilter = () => {
 
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div class="flex items-center">
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
               <Clock class="h-8 w-8 text-green-600"/>
             </div>
             <div class="ml-4">
@@ -230,7 +230,7 @@ const handleFilter = () => {
 
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div class="flex items-center">
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
               <Star class="h-8 w-8 text-yellow-600"/>
             </div>
             <div class="ml-4">
@@ -242,7 +242,7 @@ const handleFilter = () => {
 
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div class="flex items-center">
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
               <Calendar class="h-8 w-8 text-red-600"/>
             </div>
             <div class="ml-4">
@@ -489,7 +489,7 @@ const handleFilter = () => {
             <tr v-for="project in projects.data" :key="project.uuid" class="hover:bg-gray-50 dark:hover:bg-gray-700">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
+                  <div class="shrink-0 h-10 w-10">
                     <img v-if="project.poster_url" class="h-10 w-10 rounded-lg object-cover" :src="project.poster_url"
                          :alt="project.name"/>
                     <div v-else

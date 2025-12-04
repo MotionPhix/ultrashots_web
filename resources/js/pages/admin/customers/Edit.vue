@@ -135,7 +135,7 @@ defineOptions({
         <div class="flex items-center gap-4">
 <!--          <Avatar class="w-12 h-12 ring-2 ring-primary/20">-->
 <!--            <AvatarImage v-if="customer.data.avatar_url" :src="customer.data.avatar_url" />-->
-<!--            <AvatarFallback class="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">-->
+<!--            <AvatarFallback class="bg-linear-to-br from-primary/20 to-primary/10 text-primary font-semibold">-->
 <!--              {{ getInitials(customer.data) }}-->
 <!--            </AvatarFallback>-->
 <!--          </Avatar>-->

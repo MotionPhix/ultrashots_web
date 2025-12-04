@@ -320,7 +320,7 @@ onMounted(() => {
     <!-- Enhanced Header -->
     <div
       ref="headerRef"
-      class="bg-gradient-to-r from-background via-background to-background/95 border-b backdrop-blur-xl sticky top-0 z-40">
+      class="bg-linear-to-r from-background via-background to-background/95 border-b backdrop-blur-xl sticky top-0 z-40">
       <div class="mx-auto max-w-4xl px-4 py-2">
         <div class="flex lg:flex-row lg:items-center justify-between gap-6">
           <!-- Navigation and Title -->
@@ -336,7 +336,7 @@ onMounted(() => {
 
             <div class="flex items-center gap-3">
               <div
-                class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20">
+                class="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20">
                 <DownloadIcon class="h-6 w-6 text-primary"/>
               </div>
 
@@ -348,7 +348,7 @@ onMounted(() => {
                 <div class="flex items-center gap-2 mt-1">
                   <Badge
                     v-if="download.data.is_featured"
-                    class="bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+                    class="bg-linear-to-r from-amber-500 to-amber-600 text-white">
                     <Star class="w-3 h-3 mr-1 fill-current"/>
                     Featured
                   </Badge>
@@ -481,7 +481,7 @@ onMounted(() => {
           <Card ref="el => cardsRef[0] = el as HTMLElement" class="overflow-hidden">
             <div class="grid lg:grid-cols-2 gap-0">
               <!-- Image Section -->
-              <div class="aspect-video lg:aspect-square relative bg-gradient-to-br from-muted/50 to-muted">
+              <div class="aspect-video lg:aspect-square relative bg-linear-to-br from-muted/50 to-muted">
                 <img
                   v-if="download.data.poster_url"
                   :src="download.data.poster_url"
@@ -490,7 +490,7 @@ onMounted(() => {
                 />
                 <div
                   v-else
-                  class="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/80 to-muted"
+                  class="w-full h-full flex items-center justify-center bg-linear-to-br from-muted/80 to-muted"
                 >
                   <div class="text-center space-y-3">
                     <DownloadIcon class="w-16 h-16 text-muted-foreground mx-auto"/>
@@ -672,7 +672,7 @@ onMounted(() => {
               </div>
 
               <!-- Peak Day -->
-              <div class="text-center p-4 rounded-lg bg-gradient-to-r from-primary/10 to-primary/5">
+              <div class="text-center p-4 rounded-lg bg-linear-to-r from-primary/10 to-primary/5">
                 <h4 class="font-semibold mb-1">Peak Download Day</h4>
                 <p class="text-sm text-muted-foreground">
                   {{

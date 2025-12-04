@@ -318,7 +318,7 @@ defineOptions({
             </CardHeader>
             <CardContent class="space-y-4">
               <div v-if="customerData.email" class="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                <IconMail class="w-5 h-5 text-muted-foreground flex-shrink-0"/>
+                <IconMail class="w-5 h-5 text-muted-foreground shrink-0"/>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium">Email</p>
                   <a :href="`mailto:${customerData.email}`" class="text-sm text-primary hover:underline truncate block">
@@ -328,7 +328,7 @@ defineOptions({
               </div>
 
               <div v-if="customerData.phone_number" class="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                <IconPhone class="w-5 h-5 text-muted-foreground flex-shrink-0"/>
+                <IconPhone class="w-5 h-5 text-muted-foreground shrink-0"/>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium">Phone</p>
                   <a :href="`tel:${customerData.phone_number}`" class="text-sm text-primary hover:underline">
@@ -338,7 +338,7 @@ defineOptions({
               </div>
 
               <div v-if="customerData.website" class="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                <IconGlobe class="w-5 h-5 text-muted-foreground flex-shrink-0"/>
+                <IconGlobe class="w-5 h-5 text-muted-foreground shrink-0"/>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium">Website</p>
                   <a :href="customerData.website" target="_blank"
@@ -387,14 +387,14 @@ defineOptions({
             <CardContent>
               <div class="space-y-3">
                 <div class="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <IconBuilding class="w-5 h-5 text-muted-foreground flex-shrink-0"/>
+                  <IconBuilding class="w-5 h-5 text-muted-foreground shrink-0"/>
                   <div>
                     <p class="text-sm font-medium">Company</p>
                     <p class="text-sm">{{ customerData.company_name }}</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <IconUser class="w-5 h-5 text-muted-foreground flex-shrink-0"/>
+                  <IconUser class="w-5 h-5 text-muted-foreground shrink-0"/>
                   <div>
                     <p class="text-sm font-medium">Position</p>
                     <p class="text-sm">{{ customerData.job_title || 'Not specified' }}</p>
@@ -431,7 +431,7 @@ defineOptions({
 
         <!--        <Avatar class="w-16 h-16 ring-2 ring-primary/20">-->
         <!--          <AvatarImage v-if="customerData.avatar_url" :src="customerData.avatar_url" />-->
-        <!--          <AvatarFallback class="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold text-lg">-->
+        <!--          <AvatarFallback class="bg-linear-to-br from-primary/20 to-primary/10 text-primary font-semibold text-lg">-->
         <!--            {{ getInitials(customerData) }}-->
         <!--          </AvatarFallback>-->
         <!--        </Avatar>-->

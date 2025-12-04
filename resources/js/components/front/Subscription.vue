@@ -49,7 +49,7 @@ function onSubmit() {
       <!-- Background pattern -->
       <div class="absolute inset-0 pattern-dots opacity-[0.05] dark:opacity-[0.08]"></div>
       <!-- Gradient overlay -->
-      <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-background/50 to-secondary/5"></div>
+      <div class="absolute inset-0 bg-linear-to-br from-primary/5 via-background/50 to-secondary/5"></div>
       <!-- Decorative circles -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl"></div>
       <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-secondary/10 rounded-full blur-3xl"></div>

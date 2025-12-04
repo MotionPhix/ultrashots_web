@@ -370,7 +370,7 @@ onUnmounted(() => {
     <!-- Hero Section -->
     <section ref="heroRef" class="relative overflow-hidden">
       <div class="max-w-7xl mx-auto px-4">
-        <div class="relative aspect-[16/9] lg:aspect-[21/9] rounded-2xl overflow-hidden bg-muted">
+        <div class="relative aspect-video lg:aspect-21/9 rounded-2xl overflow-hidden bg-muted">
           <img
             :src="heroImage"
             :alt="`${projectData.name} hero image`"
@@ -378,7 +378,7 @@ onUnmounted(() => {
           />
 
           <!-- Overlay -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
 
           <!-- Content Overlay -->
           <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
@@ -489,7 +489,7 @@ onUnmounted(() => {
                   :key="feature"
                   class="feature-item flex items-center"
                 >
-                  <CheckCircle2 class="h-4 w-4 mr-3 text-green-600 flex-shrink-0" />
+                  <CheckCircle2 class="h-4 w-4 mr-3 text-green-600 shrink-0" />
                   <span>{{ feature }}</span>
                 </li>
               </ul>
@@ -740,7 +740,7 @@ onUnmounted(() => {
           </div>
 
           <!-- Image Info -->
-          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+          <div class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-4">
             <div class="text-white">
               <h3 class="font-medium">{{ galleryImages[selectedImageIndex]?.name || `Image ${selectedImageIndex + 1}` }}</h3>
               <p class="text-sm text-white/80">{{ selectedImageIndex + 1 }} of {{ galleryImages.length }}</p>

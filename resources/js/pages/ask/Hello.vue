@@ -209,7 +209,7 @@ defineOptions({
   <div class="min-h-screen bg-background" ref="mainRef">
     <!-- Hero Section -->
     <section
-      class="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-20 lg:py-32">
+      class="relative overflow-hidden bg-linear-to-br from-background via-background to-muted/20 py-20 lg:py-32">
       <div class="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02]"/>
       <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref="heroRef" class="text-center space-y-8">
@@ -221,7 +221,7 @@ defineOptions({
 
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight font-mono">
               Let's start a
-              <span class="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <span class="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 conversation
               </span>
             </h1>

@@ -43,7 +43,7 @@ const props = withDefaults(
 
     placeholder: 'Start typing...',
 
-    customHeight: 'h-[20rem]',
+    customHeight: 'h-80',
 
   }
 )
@@ -106,7 +106,7 @@ const editor = useEditor({
 
     Blockquote.configure({
       HTMLAttributes: {
-        class: 'text-gray-800 dark:text-white border-l-2 dark:border-l-gray-300 border-l-gray-800 pl-[1rem]'
+        class: 'text-gray-800 dark:text-white border-l-2 dark:border-l-gray-300 border-l-gray-800 pl-4'
       }
     }),
 

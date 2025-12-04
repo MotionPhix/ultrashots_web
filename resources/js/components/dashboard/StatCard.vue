@@ -27,7 +27,7 @@ const formatValue = (value: number | string) => {
 <template>
   <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
     <div class="flex items-center">
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <component :is="icon" :class="['w-8 h-8', iconColor]" />
       </div>
       <div class="ml-4 flex-1">
