@@ -9,7 +9,22 @@ import { Project, User } from '@/types';
 import { onMounted, ref, computed, onUnmounted } from 'vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import IconEmail from '@/components/icon/IconEmail.vue';
+import IconEmail from '@/components/icon/IconEmail.vue'
+import {
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBrandBehance,
+  IconArrowRight,
+  IconDownload,
+  IconMapPin,
+  IconStar,
+  IconUsers,
+  IconBriefcase,
+  IconRocket,
+  IconPalette,
+  IconCode,
+  IconEye
+} from '@tabler/icons-vue';
 
 // Shadcn Vue Components
 import { Card, CardContent } from '@/components/ui/card';

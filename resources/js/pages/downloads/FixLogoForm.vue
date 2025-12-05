@@ -9,13 +9,9 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import { useForm } from '@inertiajs/vue3';
 import { onBeforeUnmount, ref } from 'vue';
 import { FilePond } from 'filepond';
-import MazInput from 'maz-ui/components/MazInput';
-import MazPhoneNumberInput, { CountryCode } from 'maz-ui/components/MazPhoneNumberInput';
-import MazBtn from 'maz-ui/components/MazBtn';
 import InputError from '@/components/InputError.vue';
 import PreTap from '@/components/PreTap.vue';
 import InputLabel from '@/components/InputLabel.vue';
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-vue';
 import toast from '@/stores/toast';
 
 const FilePondInput = VueFilePond(
@@ -37,8 +33,6 @@ const form = useForm({
   company: '',
   logo: null
 })
-
-const countryCode = ref<CountryCode>('MW')
 
 const onSubmit = () => {
 

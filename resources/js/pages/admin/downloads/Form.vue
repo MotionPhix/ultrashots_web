@@ -23,12 +23,6 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css
 
 import VueFilePond from "vue-filepond";
 
-import { IconPhotoUp } from "@tabler/icons-vue";
-
-import MazInput from "maz-ui/components/MazInput";
-
-import MazBtn from "maz-ui/components/MazBtn"
-
 import InputLabel from "@/components/InputLabel.vue";
 
 import InputError from "@/components/InputError.vue";

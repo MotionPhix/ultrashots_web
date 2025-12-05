@@ -2,8 +2,6 @@
 import InputError from '@/components/InputError.vue';
 import InputLabel from '@/components/InputLabel.vue';
 import Modal from '@/components/Modal.vue';
-import MazBtn from 'maz-ui/components/MazBtn'
-import MazInput from 'maz-ui/components/MazInput'
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 import Spinner from '@/components/Spinner.vue';

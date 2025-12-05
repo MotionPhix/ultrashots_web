@@ -1,6 +1,5 @@
 <script setup>
 import {UseDark} from "@vueuse/components";
-import {IconMoon, IconSun} from "@tabler/icons-vue";
 </script>
 
 <template>

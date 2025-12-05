@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { IconMenu as Menu } from '@tabler/icons-vue';
 import { Home, Briefcase, Download, Mail, FileText } from 'lucide-vue-next';
 import ApplicationLogo from '@/components/ApplicationLogo.vue';
 import { Button } from '@/components/ui/button';

@@ -4,10 +4,14 @@
 
 @plugin "@tailwindcss/typography";
 
+@plugin "@tailwindcss/forms";
+
 @plugin 'tailwind-scrollbar';
 
 @plugin 'tailwindcss-animate';
 
+@source "./node_modules/preline/dist/*.js";
+@source '../../node_modules/preline/variants.css';
 @source '../../node_modules/@inertiaui/modal-vue/src/**/*.{js,vue}';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

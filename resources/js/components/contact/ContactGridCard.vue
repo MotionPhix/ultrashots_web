@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { useContactStore } from '@/stores/contactStore';
 import { Link, router } from '@inertiajs/vue3';
-import { IconFileExport, IconPencil, IconTrash } from '@tabler/icons-vue';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import MazCheckbox from 'maz-ui/components/MazCheckbox';
 import { Customer } from '@/types';
 
 const props = defineProps<{

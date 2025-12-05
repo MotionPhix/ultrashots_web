@@ -2,11 +2,9 @@
 import AddressInput from "@/components/AddressInput.vue";
 import Spinner from "@/components/Spinner.vue";
 import InputError from "@/components/InputError.vue";
-import MazInput from 'maz-ui/components/MazInput'
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import Navheader from "@/components/backend/Navheader.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { IconPlus, IconArrowLeft, IconUser, IconBuilding, IconMail, IconPhone, IconGlobe, IconMapPin, IconFileText } from "@tabler/icons-vue";
 import { ref, onMounted, nextTick } from "vue";
 import { gsap } from "gsap";
 

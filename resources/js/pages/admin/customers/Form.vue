@@ -5,13 +5,9 @@ import Spinner from "@/components/Spinner.vue";
 
 import InputError from "@/components/InputError.vue";
 
-import MazInput from 'maz-ui/components/MazInput'
-
 import AuthLayout from "@/layouts/AuthLayout.vue";
 
 import {Head, Link, useForm} from "@inertiajs/vue3";
-
-import { IconPlus } from "@tabler/icons-vue";
 
 import { Customer } from "@/types";
 

@@ -1,18 +1,4 @@
 <script setup lang="ts">
-import {
-  IconBrandLaravel,
-  IconBrandVue,
-  IconBrandHtml5,
-  IconBrandTailwind,
-  IconBrandCss3,
-  IconBrandAdobePhotoshop,
-  IconBrandAdobeIllustrator,
-  IconBrandAdobeIndesign,
-  IconBrandAdobeAfterEffect,
-  IconBrandCoreos,
-  IconBrandFigma,
-} from '@tabler/icons-vue';
-
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { onMounted, ref } from 'vue';

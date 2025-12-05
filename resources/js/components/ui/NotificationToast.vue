@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { IconX, IconCheck, IconAlertTriangle, IconInfoCircle, IconAlertCircle } from '@tabler/icons-vue';
 
 interface Props {
   id: string;

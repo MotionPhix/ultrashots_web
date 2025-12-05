@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import MazBtn from 'maz-ui/components/MazBtn'
-
 // import Spinner from "@/components/Spinner.vue";
 
 import InputError from "@/components/InputError.vue";
-
-import MazInput from 'maz-ui/components/MazInput'
 
 import { Modal } from '@inertiaui/modal-vue'
 

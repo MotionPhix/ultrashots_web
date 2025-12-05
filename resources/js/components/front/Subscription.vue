@@ -5,7 +5,6 @@ import { gsap } from 'gsap'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { IconMailFast as IconSend } from '@tabler/icons-vue'
 
 gsap.registerPlugin(); // Register GSAP plugins
 
@@ -32,7 +31,7 @@ function onSubmit() {
           yoyo: true,
           repeat: 1,
           ease: 'back.out(1.7)',
-          onComplete: () => submitting.value = false
+          onComplete: () => { submitting.value = false; }
         }
       );
     },

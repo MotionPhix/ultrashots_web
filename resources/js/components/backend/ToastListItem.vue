@@ -1,5 +1,4 @@
 <script setup>
-import { IconInfoCircle, IconX, IconCheck, IconExclamationMark } from "@tabler/icons-vue";
 import { computed } from "vue";
 import { cva } from "class-variance-authority";
 
