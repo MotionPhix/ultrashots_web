@@ -13,11 +13,12 @@ Route::get(
 Route::prefix('get-in-touch')->group(function () {
   Route::get(
     '/',
-    [\App\Http\Controllers\Frontend\ContactController::class, 'getInTouch']
-  )->name('contact.index');
+    [\App\Http\Controllers\Frontend\ContactController::class, 'load']
+  )->name('contact.load');
 
   Route::post(
-    '/', \App\Http\Controllers\Prospect\AskController::class
+    '/',
+    [\App\Http\Controllers\Frontend\ContactController::class, 'send']
   )->name('contact.send');
 });
 
@@ -25,40 +26,43 @@ Route::prefix('get-in-touch')->group(function () {
 Route::prefix('quote')->name('quote.')->group(function () {
   Route::get(
     '/',
-    [\App\Http\Controllers\QuoteController::class, 'index']
+    [\App\Http\Controllers\Frontend\QuoteController::class, 'index']
   )->name('index');
 
   Route::post(
     '/',
-    [\App\Http\Controllers\QuoteController::class, 'store']
+    [\App\Http\Controllers\Frontend\QuoteController::class, 'store']
   )->name('store');
 });
 
 // Newsletter Subscription Routes
 Route::prefix('subscribe')->group(function () {
   Route::post(
-    '/', \App\Http\Controllers\Subscribe::class
+    '/',
+    [\App\Http\Controllers\Frontend\NewsletterController::class, 'subscribe']
   )->name('subscriber.enroll');
 
   Route::get(
-    '/{token}/{email}', \App\Http\Controllers\Confirm::class
+    '/{token}/{email}',
+    [\App\Http\Controllers\Frontend\NewsletterController::class, 'confirm']
   )->name('subscriber.confirm');
 
   Route::post(
-    '/outroll', \App\Http\Controllers\Unsubscribe::class
-  )->name('subscriber.outroll');
+    '/unsubscribe',
+    [\App\Http\Controllers\Frontend\NewsletterController::class, 'unsubscribe']
+  )->name('subscriber.unsubscribe');
 });
 
 // Public Portfolio Routes
 Route::prefix('projects')->name('projects.')->group(function () {
   Route::get(
     '/',
-    [\App\Http\Controllers\Projects\ProjectController::class, 'index']
+    [\App\Http\Controllers\Frontend\ProjectController::class, 'index']
   )->name('index');
 
   Route::get(
     '/s/{project:uuid}',
-    [\App\Http\Controllers\Projects\ProjectController::class, 'show']
+    [\App\Http\Controllers\Frontend\ProjectController::class, 'show']
   )->name('show');
 });
 
@@ -67,22 +71,22 @@ Route::prefix('downloads')->name('public.')->group(function () {
 
   Route::get(
     '/',
-    [\App\Http\Controllers\Downloads\DownloadController::class, 'publicIndex']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'publicIndex']
   )->name('downloads.index');
 
   Route::get(
     '/request-a-fix',
-    [\App\Http\Controllers\Downloads\DownloadController::class, 'publicRequestFix']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'publicRequestFix']
   )->name('fix-request');
 
   Route::post(
     '/upload-file-to-fix',
-    [\App\Http\Controllers\Downloads\DownloadController::class, 'publicUploadFile']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'publicUploadFile']
   )->name('upload-file-to-fix');
 
   Route::get(
     '/download/{download:uuid}',
-    [\App\Http\Controllers\Downloads\DownloadController::class, 'download']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'download']
   )->name('get-download');
 });
 
