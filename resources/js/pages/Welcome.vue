@@ -2,10 +2,10 @@
 import { Head, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index as projectsIndex } from '@/routes/projects';
-import Projects from '@/components/front/Projects.vue';
-import Skills from '@/components/front/Skills.vue';
-import Expertise from '@/components/front/Expertise.vue';
-import Subscription from '@/components/front/Subscription.vue';
+import Projects from '@/components/frontend/Projects.vue';
+import Skills from '@/components/frontend/Skills.vue';
+import Expertise from '@/components/frontend/Expertise.vue';
+import Subscription from '@/components/frontend/Subscription.vue';
 import { Project, User } from '@/types';
 import { onMounted, ref, computed, onUnmounted } from 'vue';
 import { gsap } from 'gsap';
@@ -24,7 +24,7 @@ import {
   IconRocket,
   IconPalette,
   IconCode,
-  IconEye
+  IconEye, IconApps
 } from '@tabler/icons-vue';
 
 // Shadcn Vue Components
@@ -32,6 +32,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import Heading from '@/components/Heading.vue';
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -157,7 +158,6 @@ const stats = computed(() => [
   }
 ]);
 
-// Services/Specializations
 const services = computed(() => [
   {
     title: 'UI/UX Design',
@@ -176,6 +176,12 @@ const services = computed(() => [
     description: 'Developing cohesive visual identity systems',
     icon: IconEye,
     color: 'text-green-600'
+  },
+  {
+    title: 'Web App Development',
+    description: 'Developing cohesive visual identity systems',
+    icon: IconApps,
+    color: 'text-purple-600'
   }
 ]);
 
@@ -279,12 +285,12 @@ onUnmounted(() => {
     <!-- Hero Section -->
     <section
       ref="containerRef"
-      class="relative flex items-center justify-center overflow-x-hidden">
+      class="relative flex items-center justify-center overflow-hidden">
 
       <!-- Subtle background -->
       <div class="absolute inset-0">
         <div class="absolute inset-0 bg-grid-pattern opacity-[0.03] dark:opacity-[0.05]"></div>
-        <div class="absolute inset-0 bg-linear-to-b from-transparent via-primary/5 to-transparent"></div>
+        <div class="absolute inset-0 border-b"></div>
       </div>
 
       <!-- Main content -->
@@ -298,7 +304,7 @@ onUnmounted(() => {
 
             <!-- Availability badge -->
             <div
-              class="animate-fade-in font-mono">
+              class="animate-fade-in">
               {{ availabilityStatus.status }}
             </div>
 
@@ -308,7 +314,7 @@ onUnmounted(() => {
                 Hi, I'm <span class="text-primary">{{ firstName }}</span>
               </h1>
 
-              <p class="text-xl sm:text-2xl text-muted-foreground font-light font-mono">
+              <p class="text-xl sm:text-2xl text-muted-foreground font-light font-display">
                 {{ userTitle }}
               </p>
 
@@ -319,30 +325,30 @@ onUnmounted(() => {
             </div>
 
             <!-- Action buttons -->
-            <div class="flex flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-6 w-full max-w-xl pt-6">
+            <div class="grid sm:grid-cols-2 gap-4 sm:gap-6 w-full max-w-xl pt-6">
               <Link
-                :href="projectsIndex().url"
-                class="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 text-lg font-semibold text-white transition-all duration-300 bg-primary hover:bg-primary/90 rounded overflow-hidden">
-
-                <span class="relative z-10 flex items-center gap-2">
-                  My Work
-                  <IconArrowRight class="size-5 transition-transform group-hover:translate-x-1" />
-                </span>
-
-                <div class="absolute inset-0 bg-linear-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity" />
+                :as="Button"
+                size="lg"
+                class="group"
+                :href="projectsIndex().url">
+                My Work
+                <IconArrowRight class="size-5 transition-transform group-hover:translate-x-1" />
               </Link>
 
-              <a
+              <Button
                 href="#"
-                class="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 text-lg font-semibold transition-all duration-300 border-2 border-primary/20 hover:border-primary/30 rounded bg-background hover:bg-primary/5">
+                as="a"
+                size="lg"
+                variant="outline">
                 <IconDownload class="size-5 transition-transform group-hover:-translate-y-1" />
                 My CV
-              </a>
+              </Button>
             </div>
 
             <!-- Social links -->
             <div class="flex items-center justify-center md:justify-start gap-4">
-              <a
+              <Button
+                as="a"
                 v-for="link in socialLinks"
                 :key="link.name"
                 :href="link.url"
@@ -352,7 +358,7 @@ onUnmounted(() => {
                 class="p-2.5 rounded-lg transition-all duration-300 hover:bg-primary/10 hover:scale-105"
                 :class="link.color">
                 <component :is="link.icon" class="size-5" />
-              </a>
+              </Button>
             </div>
           </div>
 
@@ -370,7 +376,7 @@ onUnmounted(() => {
     </section>
 
     <!-- About Section -->
-    <section class="py-20 bg-muted/30 overflow-x-hidden">
+    <section class="py-20 border-b overflow-x-hidden">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid gap-12 md:grid-cols-[1fr_2fr] items-start">
           <!-- Stats -->
@@ -389,15 +395,14 @@ onUnmounted(() => {
           <!-- About Content -->
           <div class="space-y-6">
             <div class="space-y-2">
-              <h2 class="text-3xl font-semibold tracking-tight">About Me</h2>
-              <p class="text-muted-foreground leading-relaxed">
-                {{ userBio }}
-              </p>
+              <Heading
+                title="My line of work"
+                :description="userBio"
+              />
             </div>
 
             <!-- Services/Specializations -->
-            <div class="space-y-4">
-              <h3 class="text-xl font-medium font-mono">What I Do</h3>
+            <div class="space-y-4 mt-16">
               <div class="grid gap-4 sm:grid-cols-2">
                 <div
                   v-for="service in services"
@@ -434,12 +439,11 @@ onUnmounted(() => {
         class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="space-y-4 mb-12">
           <Badge variant="outline">Featured Work</Badge>
-          <h2 class="text-2xl font-semibold tracking-tight">
-            My Latest Projects
-          </h2>
-          <p class="text-lg text-muted-foreground max-w-2xl">
-            A showcase of my recent projects and creative solutions
-          </p>
+
+          <Heading
+            title="My Latest Projects"
+            description="A showcase of my recent projects and creative solutions"
+          />
         </div>
         <Projects
           :projects="projects"
@@ -454,12 +458,10 @@ onUnmounted(() => {
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="space-y-4 mb-12">
             <Badge variant="outline">Expertise</Badge>
-            <h2 class="text-2xl font-semibold tracking-tight">
-              Skills & Technologies
-            </h2>
-            <p class="text-lg text-muted-foreground max-w-2xl">
-              Tools and technologies I use to bring ideas to life
-            </p>
+            <Heading
+              title="Skills & Technologies"
+              description="Tools and technologies I use to bring ideas to life"
+            />
           </div>
           <Skills/>
         </div>
@@ -471,20 +473,19 @@ onUnmounted(() => {
         class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="space-y-4 mb-12">
           <Badge variant="outline">Journey</Badge>
-          <h2 class="text-2xl font-semibold tracking-tight">
-            Professional Experience
-          </h2>
-          <p class="text-lg text-muted-foreground max-w-2xl">
-            My journey through design and development
-          </p>
+          <Heading
+            title="Professional Experience"
+            description="My journey through design and development"
+          />
         </div>
+
         <Expertise/>
       </section>
 
       <!-- Newsletter -->
       <section
         ref="el => contentSections[3] = el as HTMLElement"
-        class="bg-muted/30 py-20">
+        class="py-20 border-t">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-8">
             <Badge variant="outline" class="mb-4">

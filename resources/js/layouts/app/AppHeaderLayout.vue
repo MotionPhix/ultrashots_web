@@ -3,21 +3,24 @@ import AppContent from '@/components/AppContent.vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppShell from '@/components/AppShell.vue';
 import type { BreadcrumbItemType } from '@/types';
+import Footnote from '@/components/frontend/Footnote.vue';
 
 interface Props {
-    breadcrumbs?: BreadcrumbItemType[];
+  breadcrumbs?: BreadcrumbItemType[];
 }
 
 withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
+  breadcrumbs: () => []
 });
 </script>
 
 <template>
-    <AppShell class="flex-col">
-        <AppHeader :breadcrumbs="breadcrumbs" />
-        <AppContent>
-            <slot />
-        </AppContent>
-    </AppShell>
+  <AppShell class="flex-col">
+    <AppHeader :breadcrumbs="breadcrumbs" />
+    <AppContent>
+      <slot />
+
+      <Footnote />
+    </AppContent>
+  </AppShell>
 </template>

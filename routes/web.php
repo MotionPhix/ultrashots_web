@@ -6,7 +6,8 @@ use Laravel\Fortify\Features;
 
 // Homepage
 Route::get(
-  '/', \App\Http\Controllers\Frontend\HomeController::class
+  '/',
+  [\App\Http\Controllers\Frontend\HomeController::class, 'index']
 )->name('home');
 
 // Contact Routes
@@ -71,22 +72,22 @@ Route::prefix('downloads')->name('public.')->group(function () {
 
   Route::get(
     '/',
-    [\App\Http\Controllers\Frontend\DownloadController::class, 'publicIndex']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'index']
   )->name('downloads.index');
 
   Route::get(
     '/request-a-fix',
-    [\App\Http\Controllers\Frontend\DownloadController::class, 'publicRequestFix']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'fixRequest']
   )->name('fix-request');
 
   Route::post(
     '/upload-file-to-fix',
-    [\App\Http\Controllers\Frontend\DownloadController::class, 'publicUploadFile']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'uploadFile']
   )->name('upload-file-to-fix');
 
   Route::get(
     '/download/{download:uuid}',
-    [\App\Http\Controllers\Frontend\DownloadController::class, 'download']
+    [\App\Http\Controllers\Frontend\DownloadController::class, 'downloadFile']
   )->name('get-download');
 });
 
