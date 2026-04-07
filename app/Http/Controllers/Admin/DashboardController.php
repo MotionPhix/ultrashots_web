@@ -9,30 +9,30 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-  public function __construct(
-    DashboardService $dashboardService
-  ) {}
+    public function __construct(
+        private DashboardService $dashboardService,
+    ) {}
 
-  /**
-   * Handle the incoming request.
-   */
-  public function index(Request $request)
-  {
-    $dashboardData = $this->dashboardService->getDashboardData();
-    $notifications = $this->dashboardService->getNotifications();
+    /**
+     * Handle the incoming request.
+     */
+    public function index(Request $request)
+    {
+        $dashboardData = $this->dashboardService->getDashboardData();
+        $notifications = $this->dashboardService->getNotifications();
 
-    return Inertia::render('admin/Dashboard', array_merge($dashboardData, [
-      'notifications' => $notifications,
-    ]));
-  }
+        return Inertia::render('admin/Dashboard', $dashboardData + [
+            'notifications' => $notifications,
+        ]);
+    }
 
-  /**
-   * Refresh dashboard data (clear cache).
-   */
-  public function refresh()
-  {
-    $this->dashboardService->clearCache();
+    /**
+     * Refresh dashboard data (clear cache).
+     */
+    public function refresh()
+    {
+        $this->dashboardService->clearCache();
 
-    return redirect()->route('admin.dashboard')->with('success', 'Dashboard data refreshed successfully.');
-  }
+        return redirect()->route('admin.dashboard')->with('success', 'Dashboard data refreshed successfully.');
+    }
 }

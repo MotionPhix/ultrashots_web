@@ -193,6 +193,29 @@ const getCustomerInitials = (customer: any) => {
   return `${customer.first_name?.[0] || ''}${customer.last_name?.[0] || ''}`.toUpperCase();
 };
 
+const shareProject = async (): Promise<void> => {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return;
+  }
+
+  const url = window.location.href;
+  const title = projectData.value.name;
+
+  try {
+    if (typeof navigator.share === 'function') {
+      await navigator.share({ title, url });
+
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url);
+    }
+  } catch {
+    // Ignore cancellation/fallback errors from share dialog and clipboard APIs.
+  }
+};
+
 // Helper function to safely query elements
 const safeQuerySelector = (selector: string, container?: HTMLElement): NodeListOf<Element> | null => {
   try {
@@ -564,14 +587,13 @@ onUnmounted(() => {
           <div class="space-y-6 sticky top-20">
             <!-- Project Details -->
             <Card>
-              <CardHeader>
-                <CardTitle class="sub-caption">
-                  Project For
-                </CardTitle>
-              </CardHeader>
               <CardContent class="space-y-4">
                 <!-- Client -->
                 <div v-if="projectData.customer">
+                  <CardTitle class="text-muted-foreground font-thin">
+                    Project for
+                  </CardTitle>
+
                   <div class="font-medium">{{ customerName }}</div>
                   <div class="text-sm text-muted-foreground">
                     {{ projectData.customer.full_name }}
@@ -589,6 +611,8 @@ onUnmounted(() => {
                   <span class="text-sm font-medium font-mono">{{ projectYear }}</span>
                 </div>
 
+                <Separator v-if="projectData.category" />
+
                 <!-- Category -->
                 <div v-if="projectData.category" class="flex items-center justify-between">
                   <div class="flex items-center">
@@ -600,6 +624,8 @@ onUnmounted(() => {
                     {{ projectData.category }}
                   </span>
                 </div>
+
+                <Separator v-if="projectData.production_type" />
 
                 <!-- Production Type -->
                 <div v-if="projectData.production_type" class="flex items-center justify-between">
@@ -628,7 +654,7 @@ onUnmounted(() => {
                 <Button
                   variant="outline"
                   size="sm" class="w-full"
-                  @click="navigator.share?.({ title: projectData.name, url: window.location.href }) || navigator.clipboard?.writeText(window.location.href)">
+                  @click="shareProject">
                   <Share2 class="h-4 w-4 mr-2" />
                   Share This Project
                 </Button>

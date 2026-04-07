@@ -6,178 +6,211 @@
 |--------------------------------------------------------------------------
 */
 
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DownloadController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ProjectController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])
-  ->prefix('admin')->name('admin.')
-  ->group(function () {
+Route::middleware(['auth', 'verified', 'is_admin'])
+    ->prefix('admin')->name('admin.')
+    ->group(function () {
 
-  // Dashboard
-  Route::get(
-    '/',
-    [\App\Http\Controllers\Admin\DashboardController::class, 'index']
-  )->name('dashboard');
+        // Dashboard
+        Route::get(
+            '/',
+            [DashboardController::class, 'index']
+        )->name('dashboard');
 
-  Route::post(
-    '/refresh',
-    [\App\Http\Controllers\Admin\DashboardController::class, 'refresh']
-  )->name('dashboard.refresh');
+        Route::post(
+            '/refresh',
+            [DashboardController::class, 'refresh']
+        )->name('dashboard.refresh');
 
-  // Customer Management
-  Route::prefix('customers')->name('customers.')->group(function () {
+        // Notifications
+        Route::prefix('notifications')->name('notifications.')->group(function () {
+            Route::get(
+                '/',
+                [NotificationController::class, 'index']
+            )->name('index');
 
-    Route::get(
-      '/',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'index']
-    )->name('index');
+            Route::patch(
+                '/{notification}/read',
+                [NotificationController::class, 'markAsRead']
+            )->name('mark-read');
 
-    Route::get(
-      '/create',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'create']
-    )->name('create');
+            Route::patch(
+                '/read-all',
+                [NotificationController::class, 'markAllAsRead']
+            )->name('mark-all-read');
 
-    Route::post(
-      '/',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'store']
-    )->name('store');
+            Route::delete(
+                '/{notification}',
+                [NotificationController::class, 'delete']
+            )->name('delete');
 
-    Route::get(
-      '/s/{customer:uuid}',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'show']
-    )->name('show');
+            Route::get(
+                '/unread-count',
+                [NotificationController::class, 'getUnreadCount']
+            )->name('unread-count');
+        });
 
-    Route::get(
-      '/e/{customer:uuid}',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'edit']
-    )->name('edit');
+        // Customer Management
+        Route::prefix('customers')->name('customers.')->group(function () {
 
-    Route::patch(
-      '/{customer:uuid}',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'update']
-    )->name('update');
+            Route::get(
+                '/',
+                [CustomerController::class, 'index']
+            )->name('index');
 
-    Route::delete(
-      '/{customer:uuid}',
-      [\App\Http\Controllers\Admin\CustomerController::class, 'destroy']
-    )->name('destroy');
+            Route::get(
+                '/create',
+                [CustomerController::class, 'create']
+            )->name('create');
 
-  });
+            Route::post(
+                '/',
+                [CustomerController::class, 'store']
+            )->name('store');
 
-  // Project Management
-  Route::prefix('projects')->name('projects.')->group(function () {
-    Route::get(
-      '/',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'listing']
-    )->name('index');
+            Route::get(
+                '/s/{customer:uuid}',
+                [CustomerController::class, 'show']
+            )->name('show');
 
-    Route::get(
-      '/create/{customer:uuid?}',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'create']
-    )->name('create');
+            Route::get(
+                '/e/{customer:uuid}',
+                [CustomerController::class, 'edit']
+            )->name('edit');
 
-    Route::post(
-      '/',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'store']
-    )->name('store');
+            Route::patch(
+                '/{customer:uuid}',
+                [CustomerController::class, 'update']
+            )->name('update');
 
-    Route::get(
-      '/s/{project:uuid}',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'detail']
-    )->name('show');
+            Route::delete(
+                '/{customer:uuid}',
+                [CustomerController::class, 'destroy']
+            )->name('destroy');
 
-    Route::get(
-      '/e/{project:uuid}',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'edit']
-    )->name('edit');
+        });
 
-    Route::put(
-      '/{project:uuid}',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'update']
-    )->name('update');
+        // Project Management
+        Route::prefix('projects')->name('projects.')->group(function () {
+            Route::get(
+                '/',
+                [ProjectController::class, 'listing']
+            )->name('index');
 
-    Route::delete(
-      '/{project:uuid}',
-      [\App\Http\Controllers\Admin\ProjectController::class, 'destroy']
-    )->name('destroy');
-  });
+            Route::get(
+                '/create/{customer:uuid?}',
+                [ProjectController::class, 'create']
+            )->name('create');
 
-  // Downloads Management
-  Route::prefix('downloads')->name('downloads.')->group(function () {
-    Route::get(
-      '/list',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'index']
-    )->name('index');
+            Route::post(
+                '/',
+                [ProjectController::class, 'store']
+            )->name('store');
 
-    Route::get(
-      '/new',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'create']
-    )->name('create');
+            Route::get(
+                '/s/{project:uuid}',
+                [ProjectController::class, 'detail']
+            )->name('show');
 
-    Route::get(
-      '/s/{download:uuid}',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'show']
-    )->name('show');
+            Route::get(
+                '/e/{project:uuid}',
+                [ProjectController::class, 'edit']
+            )->name('edit');
 
-    Route::get(
-      '/e/{download:uuid}',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'edit']
-    )->name('edit');
+            Route::put(
+                '/{project:uuid}',
+                [ProjectController::class, 'update']
+            )->name('update');
 
-    Route::put(
-      '/u/{download:uuid}',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'update']
-    )->name('update');
+            Route::delete(
+                '/{project:uuid}',
+                [ProjectController::class, 'destroy']
+            )->name('destroy');
+        });
 
-    Route::delete(
-      '/d/{download:uuid}',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'destroy']
-    )->name('destroy');
+        // Downloads Management
+        Route::prefix('downloads')->name('downloads.')->group(function () {
+            Route::get(
+                '/list',
+                [DownloadController::class, 'index']
+            )->name('index');
 
-    // Bulk operations
-    Route::post(
-      '/bulk-update',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'bulkUpdate']
-    )->name('bulk-update');
+            Route::get(
+                '/new',
+                [DownloadController::class, 'create']
+            )->name('create');
 
-    Route::post(
-      '/reorder',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'reorder']
-    )->name('reorder');
+            Route::get(
+                '/s/{download:uuid}',
+                [DownloadController::class, 'show']
+            )->name('show');
 
-    // Statistics
-    Route::get(
-      '/stats',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'stats']
-    )->name('stats');
+            Route::get(
+                '/e/{download:uuid}',
+                [DownloadController::class, 'edit']
+            )->name('edit');
 
-    // Export functionality
-    Route::get(
-      '/export',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'export']
-    )->name('export');
+            Route::put(
+                '/u/{download:uuid}',
+                [DownloadController::class, 'update']
+            )->name('update');
 
-    // Duplicate download
-    Route::post(
-      '/duplicate/{download:uuid}',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'duplicate']
-    )->name('duplicate');
+            Route::delete(
+                '/d/{download:uuid}',
+                [DownloadController::class, 'destroy']
+            )->name('destroy');
 
-    // Download file endpoint
-    Route::get(
-      '/download/{download:uuid}',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'download']
-    )->name('download');
+            // Bulk operations
+            Route::post(
+                '/bulk-update',
+                [DownloadController::class, 'bulkUpdate']
+            )->name('bulk-update');
 
-    Route::post(
-      '/',
-      [\App\Http\Controllers\Admin\DownloadController::class, 'store']
-    )->name('store');
-  });
+            Route::post(
+                '/reorder',
+                [DownloadController::class, 'reorder']
+            )->name('reorder');
 
-  // Profile Management
-  /*Route::prefix('profile')->name('profile.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('edit');
-    Route::patch('/', [\App\Http\Controllers\ProfileController::class, 'update'])->name('update');
-    Route::delete('/', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('destroy');
+            // Statistics
+            Route::get(
+                '/stats',
+                [DownloadController::class, 'stats']
+            )->name('stats');
+
+            // Export functionality
+            Route::get(
+                '/export',
+                [DownloadController::class, 'export']
+            )->name('export');
+
+            // Duplicate download
+            Route::post(
+                '/duplicate/{download:uuid}',
+                [DownloadController::class, 'duplicate']
+            )->name('duplicate');
+
+            // Download file endpoint
+            Route::get(
+                '/download/{download:uuid}',
+                [DownloadController::class, 'download']
+            )->name('download');
+
+            Route::post(
+                '/',
+                [DownloadController::class, 'store']
+            )->name('store');
+        });
+
+        // Profile Management
+        /*Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [\App\Http\Controllers\ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('destroy');
   });*/
-});
+    });

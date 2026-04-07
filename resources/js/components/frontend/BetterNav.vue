@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { IconFileSymlink, IconMenu, IconX } from '@tabler/icons-vue';
+import { IconMenu, IconX } from '@tabler/icons-vue';
 import ApplicationLogo from '@/components/ApplicationLogo.vue';
-import { ModalLink } from '@inertiaui/modal-vue';
 import BetterLink from '../BetterLink.vue';
 import { home } from '@/routes/index';
 import { index as projectsIndex } from '@/routes/projects';
 import { index as publicDownloadsIndex } from '@/routes/public/downloads';
-import { index as contactIndex } from '@/routes/contact';
+import { load as contactLoad } from '@/routes/contact';
 
 </script>
 
@@ -105,8 +104,8 @@ import { index as contactIndex } from '@/routes/contact';
 
           <BetterLink
             as="button"
-            :href="contactIndex().url"
-            :active="$page.url.startsWith(contactIndex().url)">
+            :href="contactLoad().url"
+            :active="$page.url.startsWith(contactLoad().url)">
             Contact Me
           </BetterLink>
 

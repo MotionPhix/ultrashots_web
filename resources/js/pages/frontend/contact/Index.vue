@@ -1,20 +1,13 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
 import { send } from '@/routes/contact';
-import InputError from '@/components/InputError.vue';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { ArrowRight } from 'lucide-vue-next';
 import { TipTapEditor } from '@/components/editor';
 import Heading from '@/components/Heading.vue';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const contactForm = useForm({
   name: '',
@@ -22,64 +15,14 @@ const contactForm = useForm({
   phone: '',
   company: '',
   message: '',
-})
+}).withPrecognition('post', send().url)
 
-const countryCode = ref('MW')
-
-const onSubmit = () => {
-
+const sendQuery = () => {
   contactForm.post(send().url, {
     preserveScroll: true,
-    onSuccess: () => {
-      contactForm.reset();
-    }
+    onSuccess: () => contactForm.resetAndClearErrors()
   })
-
 }
-
-const mainRef = ref(null);
-
-onMounted(() => {
-  const main = mainRef.value as any;
-  const title = main.querySelector('.title-section');
-  const formFields = main.querySelectorAll('form > div');
-
-  // Animate title
-  gsap.from(title.children, {
-    opacity: 0,
-    y: 30,
-    duration: 0.8,
-    stagger: 0.2,
-    ease: "power2.out"
-  });
-
-  // Animate form fields
-  gsap.from(formFields, {
-    opacity: 0,
-    y: 20,
-    duration: 0.6,
-    stagger: 0.1,
-    delay: 0.5,
-    scrollTrigger: {
-      trigger: formFields[0],
-      start: 'top bottom-=100',
-      toggleActions: 'play none none reverse'
-    }
-  });
-
-  // Animate submit button
-  gsap.from('button[type="submit"]', {
-    opacity: 0,
-    y: 20,
-    duration: 0.6,
-    delay: 1,
-    scrollTrigger: {
-      trigger: 'button[type="submit"]',
-      start: 'top bottom-=20',
-      toggleActions: 'play none none reverse'
-    }
-  });
-});
 
 defineOptions({
   layout: AppLayout
@@ -91,76 +34,104 @@ defineOptions({
   <Head title="Contact Me" />
 
   <article
-    class="w-full max-w-2xl px-4 pt-10 mx-auto md:pt-16 sm:px-6 lg:px-8 py-16"
-    ref="mainRef">
+    class="w-full max-w-2xl px-4 pt-10 mx-auto md:pt-16 sm:px-6 lg:px-8 py-16">
 
     <!-- Title -->
     <div class="w-full mb-10 lg:mb-14 title-section">
 
       <Heading
         title="Contact me"
-        description="I'd love to talk about how I can help you."
+        :description="contactForm.validating ? `Validating...` : `I'd love to talk about how I can help you.`"
       />
 
     </div>
     <!-- End Title -->
 
-    <form @submit.prevent="onSubmit">
+    <form class="space-y-6" @submit.prevent="sendQuery">
       <FieldGroup>
-        <FieldLabel for="name">Full name</FieldLabel>
-        <Input
-          id="name"
-          v-model="contactForm.name"
-          placeholder="Enter your full name"
-          required
-        />
-        <InputError :message="contactForm.errors.name" />
+        <Field :data-invalid="contactForm.invalid('name')">
+          <FieldLabel for="name">Full name</FieldLabel>
+          <Input
+            id="name"
+            v-model="contactForm.name"
+            :class="contactForm.invalid('name') ? 'border-red-500' : ''"
+            @change="contactForm.validate('name')"
+            placeholder="Enter your full name"
+          />
+
+          <FieldError v-if="contactForm.invalid('name')">
+            {{ contactForm.errors.name }}
+          </FieldError>
+        </Field>
       </FieldGroup>
 
       <FieldGroup>
-        <FieldLabel for="email">Email address</FieldLabel>
-        <Input
-          id="email"
-          v-model="contactForm.email"
-          type="email"
-          placeholder="Enter your email address"
-          required
-        />
-        <InputError :message="contactForm.errors.email" />
+        <Field :data-invalid="contactForm.invalid('email')">
+          <FieldLabel for="email">Email address</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            v-model="contactForm.email"
+            :class="contactForm.invalid('email') ? 'border-red-500' : ''"
+            placeholder="Enter your email address"
+            @change="contactForm.validate('email')"
+          />
+
+          <FieldError v-if="contactForm.invalid('email')">
+            {{ contactForm.errors.email }}
+          </FieldError>
+        </Field>
       </FieldGroup>
 
       <FieldGroup>
-        <FieldLabel for="phone">Phone</FieldLabel>
-        <Input
-          id="phone"
-          v-model="contactForm.phone"
-          type="tel"
-          placeholder="Enter your phone number"
-        />
-        <InputError :message="contactForm.errors.phone" />
+        <Field :data-invalid="contactForm.invalid('phone')">
+          <FieldLabel for="phone">Phone</FieldLabel>
+          <Input
+            id="phone"
+            type="tel"
+            v-model="contactForm.phone"
+            :class="contactForm.invalid('phone') ? 'border-red-500' : ''"
+            @change="contactForm.validate('phone')"
+            placeholder="Enter your phone number"
+          />
+
+          <FieldError v-if="contactForm.invalid('phone')">
+            {{ contactForm.errors.phone }}
+          </FieldError>
+        </Field>
       </FieldGroup>
 
       <FieldGroup>
-        <FieldLabel for="company">Company</FieldLabel>
-        <Input
-          id="company"
-          v-model="contactForm.company"
-          placeholder="Enter your company name"
-        />
+        <Field :data-invalid="contactForm.invalid('company')">
+          <FieldLabel for="company">Company</FieldLabel>
+          <Input
+            id="company"
+            v-model="contactForm.company"
+            :class="contactForm.invalid('company') ? 'border-red-500' : ''"
+            @change="contactForm.validate('company')"
+            placeholder="Enter your company name"
+          />
 
-        <FieldError />
+          <FieldError v-if="contactForm.invalid('company')">
+            {{ contactForm.errors.company }}
+          </FieldError>
+        </Field>
       </FieldGroup>
 
       <FieldGroup>
-        <Field data-invalid>
+        <Field :data-invalid="contactForm.invalid('message')">
           <FieldLabel for="message">Message</FieldLabel>
           <TipTapEditor
             v-model="contactForm.message"
+            @blur="contactForm.validate('message')"
+            :class="contactForm.invalid('message') ? 'border-red-500' : ''"
             placeholder="How can I assist you? Be verbose"
           />
-        </Field>
 
-        <InputError :message="contactForm.errors.message" />
+          <FieldError v-if="contactForm.invalid('message')">
+            {{ contactForm.errors.message }}
+          </FieldError>
+        </Field>
       </FieldGroup>
 
       <div class="flex justify-end">

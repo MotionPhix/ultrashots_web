@@ -54,7 +54,7 @@ const user = page.props.auth.user;
                             id="name"
                             class="mt-1 block w-full"
                             name="name"
-                            :default-value="user.name"
+                            :default-value="user?.name ?? ''"
                             required
                             autocomplete="name"
                             placeholder="Full name"
@@ -69,7 +69,7 @@ const user = page.props.auth.user;
                             type="email"
                             class="mt-1 block w-full"
                             name="email"
-                            :default-value="user.email"
+                            :default-value="user?.email ?? ''"
                             required
                             autocomplete="username"
                             placeholder="Email address"
@@ -77,7 +77,7 @@ const user = page.props.auth.user;
                         <InputError class="mt-2" :message="errors.email" />
                     </div>
 
-                    <div v-if="mustVerifyEmail && !user.email_verified_at">
+                    <div v-if="mustVerifyEmail && !user?.email_verified_at">
                         <p class="-mt-4 text-sm text-muted-foreground">
                             Your email address is unverified.
                             <Link

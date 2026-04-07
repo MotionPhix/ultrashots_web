@@ -12,7 +12,7 @@ import {
 gsap.registerPlugin()
 
 const form = useForm({
-  email: null,
+  email: '',
 })
 
 const formRef = ref(null)

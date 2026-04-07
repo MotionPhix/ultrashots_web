@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import {IconPhotoDown, IconTrashFilled} from "@tabler/icons-vue";
-import {Link} from "@inertiajs/vue3";
-import {Logo} from "@/types";
+import { IconPhotoDown, IconTrashFilled } from '@tabler/icons-vue';
+import { Link } from '@inertiajs/vue3';
+
+import type { Logo } from '@/types';
 import { getDownload } from '@/routes/public';
 import { destroy as adminDownloadsDestroy } from '@/routes/admin/downloads';
 
 const props = defineProps<{
   logoFile: Logo;
 }>();
-
-console.log('Logo file:', props.logoFile);
 </script>
 
 <template>
@@ -23,7 +22,7 @@ console.log('Logo file:', props.logoFile);
         decoding="async"
         @contextmenu.prevent
         class="object-contain w-full rounded-lg"
-        :src="logoFile.poster_url" :alt="logoFile.brand">
+        :src="logoFile.poster_url || '/assets/placeholder-project.jpg'" :alt="logoFile.brand || 'Download preview'">
 
       <div
         class="absolute transition opacity-0 bottom-2 end-2 group-hover:opacity-100">

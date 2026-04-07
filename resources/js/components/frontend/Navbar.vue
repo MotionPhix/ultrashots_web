@@ -6,7 +6,7 @@ import NavLinkMode from '@/components/NavLinkMode.vue';
 import { home } from '@/routes/index';
 import { index as projectsIndex } from '@/routes/projects';
 import { index as publicDownloadsIndex } from '@/routes/public/downloads';
-import { index as contactIndex } from '@/routes/contact';
+import { load as contactLoad } from '@/routes/contact';
 
 </script>
 
@@ -71,8 +71,8 @@ import { index as contactIndex } from '@/routes/contact';
           </NavLinkMode>
 
           <NavLinkMode
-            :href="contactIndex().url"
-            :active="$page.url.startsWith(contactIndex().url)">
+            :href="contactLoad().url"
+            :active="$page.url.startsWith(contactLoad().url)">
             Contact Me
           </NavLinkMode>
 

@@ -43,8 +43,14 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Frontend Typecheck
+        run: npm run typecheck
+
       - name: Build Assets
         run: npm run build
 
+      - name: Route Smoke Tests
+        run: php artisan test --compact tests/Feature/AdminResourceRoutesTest.php tests/Feature/Frontend/DownloadNewsletterTest.php
+
       - name: Tests
-        run: ./vendor/bin/pest
+        run: php artisan test --compact
