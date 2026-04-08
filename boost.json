@@ -9,19 +9,15 @@
     "herd_mcp": true,
     "mcp": true,
     "packages": [
-        "inertiajs/inertia-laravel",
-        "laravel/fortify",
-        "spatie/laravel-medialibrary",
-        "laravel/ai"
+        "spatie/laravel-medialibrary"
     ],
     "sail": false,
     "skills": [
-        "wayfinder-development",
-        "pest-testing",
-        "inertia-vue-development",
-        "tailwindcss-development",
         "ai-sdk-development",
         "fortify-development",
+        "laravel-best-practices",
+        "wayfinder-development",
+        "pest-testing",
         "medialibrary-development"
     ]
 }
