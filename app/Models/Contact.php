@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
@@ -23,14 +25,16 @@ class Contact extends Model
         ];
     }
 
-    public function scopeNew($query)
+    #[Scope]
+    protected function new(Builder $query): void
     {
-        return $query->where('status', 'new');
+        $query->where('status', 'new');
     }
 
-    public function scopeRead($query)
+    #[Scope]
+    protected function read(Builder $query): void
     {
-        return $query->where('status', 'read');
+        $query->where('status', 'read');
     }
 
     public function markAsRead(): void

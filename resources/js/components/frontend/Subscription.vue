@@ -1,22 +1,20 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3'
-import { ref } from 'vue'
-import { gsap } from 'gsap'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import {
-  IconSend
-} from '@tabler/icons-vue'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useForm } from '@inertiajs/vue3';
+import { gsap } from 'gsap';
+import { Send } from 'lucide-vue-next';
+import { ref } from 'vue';
 
-gsap.registerPlugin()
+gsap.registerPlugin();
 
 const form = useForm({
   email: '',
-})
+});
 
-const formRef = ref(null)
-const submitting = ref(false)
+const formRef = ref(null);
+const submitting = ref(false);
 
 function onSubmit() {
   if (submitting.value) return;
@@ -26,7 +24,8 @@ function onSubmit() {
     preserveScroll: true,
     onSuccess: () => {
       form.reset('email');
-      gsap.fromTo(formRef.value,
+      gsap.fromTo(
+        formRef.value,
         { scale: 1 },
         {
           scale: 1.02,
@@ -34,49 +33,58 @@ function onSubmit() {
           yoyo: true,
           repeat: 1,
           ease: 'back.out(1.7)',
-          onComplete: () => { submitting.value = false; }
-        }
+          onComplete: () => {
+            submitting.value = false;
+          },
+        },
       );
     },
     onError: () => {
       submitting.value = false;
-    }
-  })
+    },
+  });
 }
 </script>
 
 <template>
-  <Card class="relative overflow-hidden bg-background/50 backdrop-blur-sm border-0">
+  <Card
+    class="relative overflow-hidden border-0 bg-background/50 backdrop-blur-sm"
+  >
     <div class="absolute inset-0">
       <!-- Background pattern -->
-      <div class="absolute inset-0 pattern-dots opacity-[0.05] dark:opacity-[0.08]"></div>
+      <div
+        class="pattern-dots absolute inset-0 opacity-[0.05] dark:opacity-[0.08]"
+      ></div>
       <!-- Gradient overlay -->
-      <div class="absolute inset-0 bg-linear-to-br from-primary/5 via-background/50 to-secondary/5"></div>
+      <div
+        class="absolute inset-0 bg-linear-to-br from-primary/5 via-background/50 to-secondary/5"
+      ></div>
       <!-- Decorative circles -->
-      <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl"></div>
-      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-secondary/10 rounded-full blur-3xl"></div>
+      <div
+        class="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/10 blur-3xl"
+      ></div>
+      <div
+        class="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-secondary/10 blur-3xl"
+      ></div>
     </div>
 
     <CardContent class="relative z-10 p-8 sm:p-12">
       <div class="space-y-6">
-        <div class="text-center space-y-2">
-          <h3 class="text-2xl font-bold tracking-tight">
-            Join Our Newsletter
-          </h3>
+        <div class="space-y-2 text-center">
+          <h3 class="text-2xl font-bold tracking-tight">Join Our Newsletter</h3>
 
           <p class="text-muted-foreground">
             Stay updated with our latest projects and insights
           </p>
         </div>
 
-        <form
-          @submit.prevent="onSubmit" ref="formRef" class="space-y-4">
+        <form @submit.prevent="onSubmit" ref="formRef" class="space-y-4">
           <div class="relative">
             <Input
               v-model="form.email"
               type="email"
               placeholder="Enter your email"
-              class="pr-12 py-6 text-lg bg-background/50"
+              class="bg-background/50 py-6 pr-12 text-lg"
               :class="{ 'border-red-500': form.errors.email }"
               required
             />
@@ -84,12 +92,15 @@ function onSubmit() {
             <Button
               type="submit"
               size="icon"
-              class="absolute right-2 top-1/2 -translate-y-1/2"
-              :disabled="submitting">
-              <IconSend :class="[
-                'size-6 transition-transform',
-                submitting ? 'animate-pulse' : 'group-hover:translate-x-1'
-              ]" />
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+              :disabled="submitting"
+            >
+              <Send
+                :class="[
+                  'size-6 transition-transform',
+                  submitting ? 'animate-pulse' : 'group-hover:translate-x-1',
+                ]"
+              />
             </Button>
           </div>
 
@@ -99,14 +110,16 @@ function onSubmit() {
             enter-to-class="transform translate-y-0 opacity-100"
             leave-active-class="transition duration-200 ease-in"
             leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform -translate-y-2 opacity-0">
+            leave-to-class="transform -translate-y-2 opacity-0"
+          >
             <p v-if="form.errors.email" class="text-sm text-red-500">
               {{ form.errors.email }}
             </p>
           </transition>
 
-          <p class="text-sm text-center text-muted-foreground">
-            Join our community of {{ Math.floor(Math.random() * 900) + 100 }}+ subscribers
+          <p class="text-center text-sm text-muted-foreground">
+            Join our community of {{ Math.floor(Math.random() * 900) + 100 }}+
+            subscribers
           </p>
         </form>
       </div>

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,6 +73,7 @@ class Project extends Model implements HasMedia
             'budget' => 'decimal:2',
             'technologies' => 'array',
             'features' => 'array',
+            'results' => 'array', // Store project results/metrics as array
             'is_featured' => 'boolean',
             'is_public' => 'boolean',
             'sort_order' => 'integer',
@@ -142,145 +146,178 @@ class Project extends Model implements HasMedia
     /**
      * Get the project's duration in days.
      */
-    public function getDurationAttribute(): ?int
+    protected function duration(): Attribute
     {
-        if (! $this->start_date || ! $this->end_date) {
-            return null;
-        }
+        return Attribute::make(
+            get: function (mixed $value): ?int {
+                if (! $this->start_date || ! $this->end_date) {
+                    return null;
+                }
 
-        return $this->start_date->diffInDays($this->end_date);
+                return $this->start_date->diffInDays($this->end_date);
+            }
+        );
     }
 
     /**
      * Get the project's progress percentage.
      */
-    public function getProgressAttribute(): int
+    protected function progress(): Attribute
     {
-        if ($this->status === 'completed') {
-            return 100;
-        }
+        return Attribute::make(
+            get: function (mixed $value): int {
+                if ($this->status === 'completed') {
+                    return 100;
+                }
 
-        if ($this->status === 'not_started') {
-            return 0;
-        }
+                if ($this->status === 'not_started') {
+                    return 0;
+                }
 
-        if (! $this->start_date || ! $this->end_date) {
-            return 0;
-        }
+                if (! $this->start_date || ! $this->end_date) {
+                    return 0;
+                }
 
-        $totalDays = $this->start_date->diffInDays($this->end_date);
-        $elapsedDays = $this->start_date->diffInDays(now());
+                $totalDays = $this->start_date->diffInDays($this->end_date);
+                $elapsedDays = $this->start_date->diffInDays(now());
 
-        if ($totalDays <= 0) {
-            return 0;
-        }
+                if ($totalDays <= 0) {
+                    return 0;
+                }
 
-        return min(100, max(0, round(($elapsedDays / $totalDays) * 100)));
+                return min(100, max(0, round(($elapsedDays / $totalDays) * 100)));
+            }
+        );
     }
 
     /**
      * Get the project's status badge color.
      */
-    public function getStatusColorAttribute(): string
+    protected function statusColor(): Attribute
     {
-        return match ($this->status) {
-            'not_started' => 'gray',
-            'in_progress' => 'blue',
-            'on_hold' => 'yellow',
-            'completed' => 'green',
-            'cancelled' => 'red',
-            default => 'gray',
-        };
+        return Attribute::make(
+            get: function (mixed $value): string {
+                return match ($this->status) {
+                    'not_started' => 'gray',
+                    'in_progress' => 'blue',
+                    'on_hold' => 'yellow',
+                    'completed' => 'green',
+                    'cancelled' => 'red',
+                    default => 'gray',
+                };
+            }
+        );
     }
 
     /**
      * Get the project's priority badge color.
      */
-    public function getPriorityColorAttribute(): string
+    protected function priorityColor(): Attribute
     {
-        return match ($this->priority) {
-            'low' => 'green',
-            'medium' => 'yellow',
-            'high' => 'orange',
-            'urgent' => 'red',
-            default => 'gray',
-        };
+        return Attribute::make(
+            get: function (mixed $value): string {
+                return match ($this->priority) {
+                    'low' => 'green',
+                    'medium' => 'yellow',
+                    'high' => 'orange',
+                    'urgent' => 'red',
+                    default => 'gray',
+                };
+            }
+        );
     }
 
     /**
      * Get the project's main technology stack.
      */
-    public function getMainTechnologiesAttribute(): array
+    protected function mainTechnologies(): Attribute
     {
-        if (! $this->technologies) {
-            return [];
-        }
+        return Attribute::make(
+            get: function (mixed $value): array {
+                if (! $this->technologies) {
+                    return [];
+                }
 
-        return array_slice($this->technologies, 0, 3);
+                return array_slice($this->technologies, 0, 3);
+            }
+        );
     }
 
     /**
      * Get the project's estimated vs actual hours variance.
      */
-    public function getHoursVarianceAttribute(): ?float
+    protected function hoursVariance(): Attribute
     {
-        if (! $this->estimated_hours || ! $this->actual_hours) {
-            return null;
-        }
+        return Attribute::make(
+            get: function (mixed $value): ?float {
+                if (! $this->estimated_hours || ! $this->actual_hours) {
+                    return null;
+                }
 
-        return $this->actual_hours - $this->estimated_hours;
+                return $this->actual_hours - $this->estimated_hours;
+            }
+        );
     }
 
     /**
      * Check if the project is overdue.
      */
-    public function getIsOverdueAttribute(): bool
+    protected function isOverdue(): Attribute
     {
-        return $this->end_date &&
-          $this->end_date->isPast() &&
-          $this->status !== 'completed';
+        return Attribute::make(
+            get: function (mixed $value): bool {
+                return $this->end_date &&
+                    $this->end_date->isPast() &&
+                    $this->status !== 'completed';
+            }
+        );
     }
 
     /**
      * Scope a query to only include active projects.
      */
-    public function scopeActive($query)
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        return $query->whereIn('status', ['not_started', 'in_progress']);
+        $query->whereIn('status', ['not_started', 'in_progress']);
     }
 
     /**
      * Scope a query to only include completed projects.
      */
-    public function scopeCompleted($query)
+    #[Scope]
+    protected function completed(Builder $query): void
     {
-        return $query->where('status', 'completed');
+        $query->where('status', 'completed');
     }
 
     /**
      * Scope a query to only include featured projects.
      */
-    public function scopeFeatured($query)
+    #[Scope]
+    protected function featured(Builder $query): void
     {
-        return $query->where('is_featured', true);
+        $query->where('is_featured', true);
     }
 
     /**
      * Scope a query to only include public projects.
      */
-    public function scopePublic($query)
+    #[Scope]
+    protected function public(Builder $query): void
     {
-        return $query->where('is_public', true);
+        $query->where('is_public', true);
     }
 
     /**
      * Scope a query to search projects.
      */
-    public function scopeSearch($query, $search)
+    #[Scope]
+    protected function search(Builder $query, string $search): void
     {
         $searchTerm = Str::lower((string) $search);
 
-        return $query->where(function ($q) use ($search, $searchTerm) {
+        $query->where(function ($q) use ($search, $searchTerm) {
             $q->where('name', 'like', "%{$search}%")
                 ->orWhere('description', 'like', "%{$search}%")
                 ->orWhere('short_description', 'like', "%{$search}%")
@@ -294,33 +331,37 @@ class Project extends Model implements HasMedia
     /**
      * Scope a query to filter by production type.
      */
-    public function scopeByProductionType($query, $type)
+    #[Scope]
+    protected function byProductionType(Builder $query, string $type): void
     {
-        return $query->where('production_type', $type);
+        $query->where('production_type', $type);
     }
 
     /**
      * Scope a query to filter by category.
      */
-    public function scopeByCategory($query, $category)
+    #[Scope]
+    protected function byCategory(Builder $query, string $category): void
     {
-        return $query->where('category', $category);
+        $query->where('category', $category);
     }
 
     /**
      * Scope a query to filter by status.
      */
-    public function scopeByStatus($query, $status)
+    #[Scope]
+    protected function byStatus(Builder $query, string $status): void
     {
-        return $query->where('status', $status);
+        $query->where('status', $status);
     }
 
     /**
      * Scope a query to filter by year.
      */
-    public function scopeByYear($query, $year)
+    #[Scope]
+    protected function byYear(Builder $query, int $year): void
     {
-        return $query->where(function ($q) use ($year) {
+        $query->where(function ($q) use ($year) {
             $q->whereYear('end_date', $year)
                 ->orWhere(function ($q2) use ($year) {
                     $q2->whereNull('end_date')->whereYear('created_at', $year);
@@ -331,17 +372,19 @@ class Project extends Model implements HasMedia
     /**
      * Scope a query to filter by priority.
      */
-    public function scopeByPriority($query, $priority)
+    #[Scope]
+    protected function byPriority(Builder $query, string $priority): void
     {
-        return $query->where('priority', $priority);
+        $query->where('priority', $priority);
     }
 
     /**
      * Scope a query to order by sort order.
      */
-    public function scopeOrdered($query)
+    #[Scope]
+    protected function ordered(Builder $query): void
     {
-        return $query->orderBy('sort_order');
+        $query->orderBy('sort_order');
     }
 
     /**
@@ -386,31 +429,45 @@ class Project extends Model implements HasMedia
 
     /**
      * Get the poster image URL.
+     * Priority: 1) Media library poster, 2) Database poster_url field
      */
-    public function getPosterUrlAttribute(): ?string
+    protected function posterUrl(): Attribute
     {
-        $poster = $this->getFirstMedia('poster');
+        return Attribute::make(
+            get: function (mixed $value) {
+                // First, check for media library poster
+                $poster = $this->getFirstMedia('poster');
+                if ($poster) {
+                    return $poster->getUrl('medium');
+                }
 
-        return $poster ? $poster->getUrl('medium') : null;
+                // Fall back to database poster_url field (for placeholder images)
+                return $value;
+            }
+        );
     }
 
     /**
      * Get the gallery images.
      */
-    public function getGalleryImagesAttribute(): array
+    protected function galleryImages(): Attribute
     {
-        return $this->getMedia('gallery')->map(function ($media) {
-            return [
-                'id' => $media->id,
-                'name' => $media->name,
-                'file_name' => $media->file_name,
-                'mime_type' => $media->mime_type,
-                'size' => $media->size,
-                'url' => $media->getUrl(),
-                'thumb_url' => $media->getUrl('thumb'),
-                'medium_url' => $media->getUrl('medium'),
-                'large_url' => $media->getUrl('large'),
-            ];
-        })->toArray();
+        return Attribute::make(
+            get: function (mixed $value): array {
+                return $this->getMedia('gallery')->map(function ($media) {
+                    return [
+                        'id' => $media->id,
+                        'name' => $media->name,
+                        'file_name' => $media->file_name,
+                        'mime_type' => $media->mime_type,
+                        'size' => $media->size,
+                        'url' => $media->getUrl(),
+                        'thumb_url' => $media->getUrl('thumb'),
+                        'medium_url' => $media->getUrl('medium'),
+                        'large_url' => $media->getUrl('large'),
+                    ];
+                })->toArray();
+            }
+        );
     }
 }

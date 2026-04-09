@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -66,29 +69,34 @@ class Download extends Model implements HasMedia
         return 'uuid';
     }
 
-    public function scopePublic($query)
+    #[Scope]
+    protected function public(Builder $query): void
     {
-        return $query->where('is_public', true);
+        $query->where('is_public', true);
     }
 
-    public function scopeFeatured($query)
+    #[Scope]
+    protected function featured(Builder $query): void
     {
-        return $query->where('is_featured', true);
+        $query->where('is_featured', true);
     }
 
-    public function scopePopular($query)
+    #[Scope]
+    protected function popular(Builder $query): void
     {
-        return $query->orderByDesc('download_count');
+        $query->orderByDesc('download_count');
     }
 
-    public function scopeRecent($query)
+    #[Scope]
+    protected function recent(Builder $query): void
     {
-        return $query->latest('published_at')->latest();
+        $query->latest('published_at')->latest();
     }
 
-    public function scopeSearch($query, string $search)
+    #[Scope]
+    protected function search(Builder $query, string $search): void
     {
-        return $query->where(function ($downloadQuery) use ($search) {
+        $query->where(function ($downloadQuery) use ($search) {
             $downloadQuery->where('title', 'like', "%{$search}%")
                 ->orWhere('brand', 'like', "%{$search}%")
                 ->orWhere('description', 'like', "%{$search}%")
@@ -97,19 +105,22 @@ class Download extends Model implements HasMedia
         });
     }
 
-    public function scopeByCategory($query, string $category)
+    #[Scope]
+    protected function byCategory(Builder $query, string $category): void
     {
-        return $query->where('category', $category);
+        $query->where('category', $category);
     }
 
-    public function scopeByFileType($query, string $fileType)
+    #[Scope]
+    protected function byFileType(Builder $query, string $fileType): void
     {
-        return $query->where('file_type', $fileType);
+        $query->where('file_type', $fileType);
     }
 
-    public function scopeOrdered($query)
+    #[Scope]
+    protected function ordered(Builder $query): void
     {
-        return $query->orderBy('sort_order')->latest('published_at');
+        $query->orderBy('sort_order')->latest('published_at');
     }
 
     public function registerMediaCollections(): void
@@ -131,31 +142,39 @@ class Download extends Model implements HasMedia
             ->nonQueued();
     }
 
-    public function getPosterUrlAttribute(): ?string
+    protected function posterUrl(): Attribute
     {
-        return $this->getFirstMediaUrl('poster', 'thumb')
-            ?: $this->getFirstMediaUrl('poster')
-            ?: null;
+        return Attribute::make(
+            get: fn () => $this->getFirstMediaUrl('poster', 'thumb')
+                ?: $this->getFirstMediaUrl('poster')
+                ?: null
+        );
     }
 
-    public function getFormattedFileSizeAttribute(): ?string
+    protected function formattedFileSize(): Attribute
     {
-        $bytes = $this->file_size ?? $this->getFirstMedia('file')?->size;
+        return Attribute::make(
+            get: function () {
+                $bytes = $this->file_size ?? $this->getFirstMedia('file')?->size;
 
-        if ($bytes === null || $bytes <= 0) {
-            return null;
-        }
+                if ($bytes === null || $bytes <= 0) {
+                    return null;
+                }
 
-        $units = ['B', 'KB', 'MB', 'GB'];
-        $power = (int) floor(log($bytes, 1024));
-        $power = min($power, count($units) - 1);
+                $units = ['B', 'KB', 'MB', 'GB'];
+                $power = (int) floor(log($bytes, 1024));
+                $power = min($power, count($units) - 1);
 
-        return number_format($bytes / (1024 ** $power), $power === 0 ? 0 : 1).' '.$units[$power];
+                return number_format($bytes / (1024 ** $power), $power === 0 ? 0 : 1).' '.$units[$power];
+            }
+        );
     }
 
-    public function getHasFileAttribute(): bool
+    protected function hasFile(): Attribute
     {
-        return $this->getFirstMedia('file') !== null;
+        return Attribute::make(
+            get: fn () => $this->getFirstMedia('file') !== null
+        );
     }
 
     public function incrementDownloadCount(): void

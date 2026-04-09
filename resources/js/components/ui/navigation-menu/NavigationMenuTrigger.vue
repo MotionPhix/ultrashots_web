@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
-import { ChevronDown } from 'lucide-vue-next'
+import type { NavigationMenuTriggerProps } from "reka-ui"
+import type { HTMLAttributes } from "vue"
+import { reactiveOmit } from "@vueuse/core"
+import { IconChevronDown } from '@tabler/icons-vue'
 import {
   NavigationMenuTrigger,
-  type NavigationMenuTriggerProps,
   useForwardProps,
-} from 'reka-ui'
-import { computed, type HTMLAttributes } from 'vue'
-import { navigationMenuTriggerStyle } from '.'
+} from "reka-ui"
+import { cn } from "@/lib/utils"
+import { navigationMenuTriggerStyle } from "."
 
-const props = defineProps<NavigationMenuTriggerProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps<NavigationMenuTriggerProps & { class?: HTMLAttributes["class"] }>()
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-
-  return delegated
-})
+const delegatedProps = reactiveOmit(props, "class")
 
 const forwardedProps = useForwardProps(delegatedProps)
 </script>
@@ -27,9 +24,6 @@ const forwardedProps = useForwardProps(delegatedProps)
     :class="cn(navigationMenuTriggerStyle(), 'group', props.class)"
   >
     <slot />
-    <ChevronDown
-      class="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
-      aria-hidden="true"
-    />
+    <IconChevronDown class="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180" aria-hidden="true" />
   </NavigationMenuTrigger>
 </template>

@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
+import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import Heading from '@/components/Heading.vue';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { ArrowRight } from 'lucide-vue-next';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ArrowRight, Paperclip } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 const props = defineProps<{
   projectTypes: Record<string, string>;
@@ -80,16 +80,20 @@ defineOptions({ layout: AppLayout, inheritAttrs: false });
     <Head title="Request a Quote" />
 
     <div class="min-h-screen bg-background">
-        <section class="py-16">
-            <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Header -->
-                <div class="text-center mb-12">
-                    <Heading title="Request a Quote"
-                        description="Tell us about your project and we'll provide a detailed quotation" />
-                </div>
+        <section class="max-w-4xl mx-auto py-16 grid sm:grid-cols-3 sm:gap-12">
+            <!-- Header -->
+             <article>
+              <div class="mb-12 sticky top-24">
+                  <Heading
+                    title="Request a Quote"
+                    description="Tell us about your project and we'll provide a detailed quotation"
+                  />
+              </div>
+            </article>
 
+            <div class="px-4 sm:col-span-2">
                 <!-- Form -->
-                <FieldGroup v-if="!showQuotation" class="bg-card rounded-lg border p-8">
+                <FieldGroup v-if="!showQuotation" class="bg-card rounded-lg border p-4 sm:p-6 lg:p-8">
                     <!-- Name -->
                     <Field>
                         <FieldLabel for="name">Full Name *</FieldLabel>
@@ -203,9 +207,13 @@ defineOptions({ layout: AppLayout, inheritAttrs: false });
                             <input id="reference_files" type="file" multiple accept="image/*,.pdf"
                                 @change="handleFileInput" class="hidden" />
                             <label for="reference_files" class="cursor-pointer block">
-                                <div class="space-y-2">
-                                    <div class="text-3xl">📎</div>
+                                <div class="space-y-2 flex flex-col">
+                                    <div class="text-3xl mx-auto text-muted-foreground">
+                                      <Paperclip :stroke-width="1" class="size-12" />
+                                    </div>
+
                                     <div class="font-semibold">Click to upload or drag and drop</div>
+
                                     <p class="text-sm text-muted-foreground">PNG, JPG, GIF, WebP or PDF (Max 10MB per
                                         file)</p>
                                 </div>
@@ -354,8 +362,8 @@ defineOptions({ layout: AppLayout, inheritAttrs: false });
                             Another Quote
                         </Button>
 
-                        <Link 
-                          :as="Button" 
+                        <Link
+                          :as="Button"
                           href="/get-in-touch" class="h-11">
                           More Info <ArrowRight />
                         </Link>

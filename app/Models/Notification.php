@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -51,13 +53,15 @@ class Notification extends Model
         $this->update(['read_at' => null]);
     }
 
-    public function scopeUnread($query)
+    #[Scope]
+    protected function unread(Builder $query): void
     {
-        return $query->whereNull('read_at');
+        $query->whereNull('read_at');
     }
 
-    public function scopeRead($query)
+    #[Scope]
+    protected function read(Builder $query): void
     {
-        return $query->whereNotNull('read_at');
+        $query->whereNotNull('read_at');
     }
 }

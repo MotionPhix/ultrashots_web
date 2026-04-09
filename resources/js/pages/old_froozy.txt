@@ -1,0 +1,182 @@
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import HeroSection from '@/components/frontend/home/HeroSection.vue';
+import AboutSection from '@/components/frontend/home/AboutSection.vue';
+import PortfolioSection from '@/components/frontend/home/PortfolioSection.vue';
+import ServicesSection from '@/components/frontend/home/ServicesSection.vue';
+import TestimonialsSection from '@/components/frontend/home/TestimonialsSection.vue';
+import ProcessSection from '@/components/frontend/home/ProcessSection.vue';
+import CtaSection from '@/components/frontend/home/CtaSection.vue';
+import { useFlashMessages } from '@/composables/useFlashMessages';
+import { useHomepageContentStore } from '@/stores/useHomepageContentStore';
+import type { LandingApiRoutes, LandingContent } from '@/types/home';
+import { Head } from '@inertiajs/vue3';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { storeToRefs } from 'pinia';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
+
+gsap.registerPlugin(ScrollTrigger);
+
+defineOptions({ layout: AppLayout });
+
+const props = defineProps<{
+    landing: LandingContent;
+    api: LandingApiRoutes;
+}>();
+
+useFlashMessages();
+
+const homepageContentStore = useHomepageContentStore();
+const { caseStudies, testimonials } = storeToRefs(homepageContentStore);
+
+homepageContentStore.bootstrap(props.landing.caseStudies, props.landing.testimonials);
+
+watch(
+    () => props.landing,
+    (landing) => {
+        homepageContentStore.bootstrap(landing.caseStudies, landing.testimonials);
+    },
+    { deep: true },
+);
+
+const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;
+const hotjarId = import.meta.env.VITE_HOTJAR_ID as string | undefined;
+const hotjarVersion = (import.meta.env.VITE_HOTJAR_VERSION as string | undefined) || '6';
+const calendlyUrl = import.meta.env.VITE_CALENDLY_URL as string | undefined;
+
+const seo = computed(() => ({
+    title: props.landing.seo?.title ?? 'Malawi Branding Strategist | Premium Brand Identity and UI Design in Lilongwe',
+    description:
+        props.landing.seo?.description ??
+        'Premium branding, UI systems, and campaign design for Lilongwe agencies, NGOs, and SMEs that want stronger trust and faster conversions.',
+    keywords: Array.isArray(props.landing.seo?.keywords) ? props.landing.seo.keywords : [],
+}));
+
+const metaKeywords = computed(() => seo.value.keywords.join(', '));
+
+const canonicalUrl = computed(() => {
+    const configuredUrl = import.meta.env.VITE_SITE_URL as string | undefined;
+
+    return configuredUrl || (typeof window !== 'undefined' ? window.location.origin : '');
+});
+
+const structuredData = computed(() => {
+    const firstCaseStudy = caseStudies.value[0];
+
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CreativeWork',
+        name: seo.value.title,
+        description: seo.value.description,
+        areaServed: ['Malawi', 'Africa', 'Remote'],
+        creator: {
+            '@type': 'Person',
+            name: props.landing.owner.name,
+            jobTitle: props.landing.owner.title,
+            address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Lilongwe',
+                addressCountry: 'Malawi',
+            },
+            email: props.landing.owner.email,
+        },
+        offers: props.landing.services.map((service) => ({
+            '@type': 'Offer',
+            category: service.name,
+            priceSpecification: service.price,
+        })),
+        workExample: firstCaseStudy
+            ? {
+                  '@type': 'CreativeWork',
+                  name: firstCaseStudy.title,
+                  description: firstCaseStudy.summary,
+              }
+            : undefined,
+    });
+});
+
+const analyticsBootstrap = computed(() => {
+    if (!gaMeasurementId) {
+        return '';
+    }
+
+    return `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${gaMeasurementId}');`;
+});
+
+const hotjarBootstrap = computed(() => {
+    if (!hotjarId) {
+        return '';
+    }
+
+    return `(function(h,o,t,j,a,r){h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};h._hjSettings={hjid:${hotjarId},hjsv:${hotjarVersion}};a=o.getElementsByTagName('head')[0];r=o.createElement('script');r.async=1;r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;a.appendChild(r);})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`;
+});
+
+onMounted(() => {
+    const sections = gsap.utils.toArray<HTMLElement>('[data-reveal]');
+
+    sections.forEach((section) => {
+        gsap.fromTo(
+            section,
+            { opacity: 0, y: 40 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.85,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 85%',
+                    once: true,
+                },
+            },
+        );
+    });
+
+    const refresh = () => homepageContentStore.refreshDynamicContent(props.api.caseStudies, props.api.testimonials);
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        window.requestIdleCallback(refresh, { timeout: 1200 });
+    } else {
+        globalThis.setTimeout(refresh, 300);
+    }
+});
+
+onUnmounted(() => {
+    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+});
+</script>
+
+<template>
+    <Head>
+        <title>{{ seo.title }}</title>
+        <meta name="description" :content="seo.description">
+        <meta name="keywords" :content="metaKeywords">
+        <meta property="og:title" :content="seo.title">
+        <meta property="og:description" :content="seo.description">
+        <meta property="og:type" content="website">
+        <meta property="og:url" :content="canonicalUrl">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="canonical" :href="canonicalUrl">
+        <component :is="'script'" type="application/ld+json">
+            {{ structuredData }}
+        </component>
+        <component :is="'script'" v-if="gaMeasurementId" async :src="`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`" />
+        <component :is="'script'" v-if="gaMeasurementId">
+            {{ analyticsBootstrap }}
+        </component>
+        <component :is="'script'" v-if="hotjarId">
+            {{ hotjarBootstrap }}
+        </component>
+    </Head>
+
+    <div>
+        <HeroSection :hero="landing.hero" :owner="landing.owner" :case-studies="caseStudies" />
+        <AboutSection data-reveal :about="landing.about" :logos="landing.clientLogos" />
+        <PortfolioSection data-reveal :case-studies="caseStudies" />
+        <ServicesSection data-reveal :services="landing.services" />
+        <TestimonialsSection data-reveal :testimonials="testimonials" />
+        <ProcessSection data-reveal :steps="landing.process" :variants="landing.abTests" />
+        <CtaSection data-reveal :cta="landing.cta" :calendly-url="calendlyUrl" />
+    </div>
+</template>

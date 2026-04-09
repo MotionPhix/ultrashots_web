@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import AppearanceTabs from '@/components/AppearanceTabs.vue';
 import AppLogo from '@/components/AppLogo.vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -31,23 +31,23 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
-import type { BreadcrumbItem, NavItem } from '@/types';
-import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import {
-  LayoutGrid,
-  Menu,
-  Briefcase,
-  Mail,
-  FileText,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
 import { home, register } from '@/routes';
+import { load as loadContactForm } from '@/routes/contact';
 import { index as projectsIndex } from '@/routes/projects';
 import { index as publicDownloadsIndex } from '@/routes/public/downloads';
 import { index as quoteIndex } from '@/routes/quote';
-import { load as loadContactForm } from '@/routes/contact';
-import { IconLogin2, IconMessages } from '@tabler/icons-vue';
-import AppearanceTabs from '@/components/AppearanceTabs.vue';
+import type { BreadcrumbItem, NavItem } from '@/types';
+import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
+import {
+  Briefcase,
+  FileText,
+  LayoutGrid,
+  LogIn,
+  Mail,
+  Menu,
+  MessageSquare,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
   breadcrumbs?: BreadcrumbItem[];
@@ -86,7 +86,7 @@ const mainNavItems: NavItem[] = [
   {
     title: 'Chat',
     href: publicDownloadsIndex().url,
-    icon: IconMessages,
+    icon: MessageSquare,
   },
   {
     title: 'Contact',
@@ -104,7 +104,7 @@ const rightNavItems: NavItem[] = [
   {
     title: 'Get Started',
     href: register().url,
-    icon: IconLogin2,
+    icon: LogIn,
   },
 ];
 </script>

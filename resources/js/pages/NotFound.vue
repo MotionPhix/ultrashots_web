@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import GuestLayout from '@/layouts/AuthLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -59,55 +59,4 @@ defineOptions({
     <!-- ========== END FOOTER ========== -->
   </div>
 
-
 </template>
-
-<script>
-export default {
-  name: 'NotFound',
-};
-</script>
-
-<style scoped>
-.not-found {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  /* background-color: #f8f9fa; */
-  text-align: center;
-}
-
-.not-found-content {
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: 6rem;
-  margin: 0;
-  color: #dc3545;
-}
-
-h2 {
-  font-size: 2rem;
-  margin: 1rem 0;
-}
-
-p {
-  margin-bottom: 2rem;
-}
-
-.btn {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
-}
-
-.btn:hover {
-  background-color: #0056b3;
-}
-</style>

@@ -1,16 +1,21 @@
-import { qrCode, recoveryCodes, secretKey } from '@/routes/two-factor';
+import { useHttp } from '@inertiajs/vue3';
+import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
+import { qrCode, recoveryCodes, secretKey } from '@/routes/two-factor';
 
-const fetchJson = async <T>(url: string): Promise<T> => {
-    const response = await fetch(url, {
-        headers: { Accept: 'application/json' },
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.status}`);
-    }
-
-    return response.json();
+export type UseTwoFactorAuthReturn = {
+    qrCodeSvg: Ref<string | null>;
+    manualSetupKey: Ref<string | null>;
+    recoveryCodesList: Ref<string[]>;
+    errors: Ref<string[]>;
+    hasSetupData: ComputedRef<boolean>;
+    clearSetupData: () => void;
+    clearErrors: () => void;
+    clearTwoFactorAuthData: () => void;
+    fetchQrCode: () => Promise<void>;
+    fetchSetupKey: () => Promise<void>;
+    fetchSetupData: () => Promise<void>;
+    fetchRecoveryCodes: () => Promise<void>;
 };
 
 const errors = ref<string[]>([]);
@@ -22,12 +27,15 @@ const hasSetupData = computed<boolean>(
     () => qrCodeSvg.value !== null && manualSetupKey.value !== null,
 );
 
-export const useTwoFactorAuth = () => {
+export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
+    const http = useHttp();
+
     const fetchQrCode = async (): Promise<void> => {
         try {
-            const { svg } = await fetchJson<{ svg: string; url: string }>(
-                qrCode.url(),
-            );
+            const { svg } = (await http.submit(qrCode())) as {
+                svg: string;
+                url: string;
+            };
 
             qrCodeSvg.value = svg;
         } catch {
@@ -38,9 +46,9 @@ export const useTwoFactorAuth = () => {
 
     const fetchSetupKey = async (): Promise<void> => {
         try {
-            const { secretKey: key } = await fetchJson<{ secretKey: string }>(
-                secretKey.url(),
-            );
+            const { secretKey: key } = (await http.submit(secretKey())) as {
+                secretKey: string;
+            };
 
             manualSetupKey.value = key;
         } catch {
@@ -68,9 +76,9 @@ export const useTwoFactorAuth = () => {
     const fetchRecoveryCodes = async (): Promise<void> => {
         try {
             clearErrors();
-            recoveryCodesList.value = await fetchJson<string[]>(
-                recoveryCodes.url(),
-            );
+            recoveryCodesList.value = (await http.submit(
+                recoveryCodes(),
+            )) as string[];
         } catch {
             errors.value.push('Failed to fetch recovery codes');
             recoveryCodesList.value = [];

@@ -1,11 +1,12 @@
+import { withInertiaModal } from '@inertiaui/modal-vue';
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/vue3';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import type { DefineComponent } from 'vue';
-import { createApp, h } from 'vue';
-import { initializeTheme } from './composables/useAppearance';
 import { configureEcho } from '@laravel/echo-vue';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createPinia } from 'pinia';
+import type { DefineComponent } from 'vue';
+import { initializeTheme } from './composables/useAppearance';
 
 configureEcho({
     broadcaster: 'pusher',
@@ -20,10 +21,9 @@ createInertiaApp({
             `./pages/${name}.vue`,
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
-    setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .mount(el);
+    withApp(app) {
+        app.use(createPinia());
+        withInertiaModal(app);
     },
     progress: {
         color: '#4B5563',

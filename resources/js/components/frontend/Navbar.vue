@@ -1,30 +1,32 @@
-<script setup>
+<script setup lang="ts">
 import ApplicationLogo from '@/components/ApplicationLogo.vue';
-import { IconMenu4, IconX } from '@tabler/icons-vue';
-import { Link } from '@inertiajs/vue3';
 import NavLinkMode from '@/components/NavLinkMode.vue';
+import { load as contactLoad } from '@/routes/contact';
 import { home } from '@/routes/index';
 import { index as projectsIndex } from '@/routes/projects';
 import { index as publicDownloadsIndex } from '@/routes/public/downloads';
-import { load as contactLoad } from '@/routes/contact';
-
+import { Link } from '@inertiajs/vue3';
+import { Equal, X } from 'lucide-vue-next';
 </script>
 
 <template>
   <!-- ========== HEADER ========== -->
   <header
-    class="sticky inset-x-0 top-0 z-50 flex flex-wrap w-full md:justify-start md:flex-nowrap sm:text-sm">
-
+    class="sticky inset-x-0 top-0 z-50 flex w-full flex-wrap sm:text-sm md:flex-nowrap md:justify-start"
+  >
     <nav
-      class="mt-4 relative max-w-2xl w-full bg-white border border-gray-200 rounded-4xl mx-2 py-2.5 md:flex md:items-center md:justify-between md:py-0 md:px-4 md:mx-auto dark:bg-neutral-900 dark:border-neutral-700">
-
+      class="relative mx-2 mt-4 w-full max-w-2xl rounded-4xl border border-gray-200 bg-white py-2.5 md:mx-auto md:flex md:items-center md:justify-between md:px-4 md:py-0 dark:border-neutral-700 dark:bg-neutral-900"
+    >
       <div class="flex items-center justify-between px-4 md:px-0">
         <!-- Logo -->
         <div>
           <Link
-            class="flex items-center gap-2 text-xl font-semibold rounded-md dark:text-gray-300 focus:outline-none focus:opacity-80" :href="home().url" aria-label="Ultrashots">
+            class="flex items-center gap-2 rounded-md text-xl font-semibold focus:opacity-80 focus:outline-none dark:text-gray-300"
+            :href="home().url"
+            aria-label="Ultrashots"
+          >
             <ApplicationLogo class="w-7" />
-            <span class="text-2xl ">ultrashots</span>
+            <span class="text-2xl">ultrashots</span>
           </Link>
         </div>
         <!-- End Logo -->
@@ -33,13 +35,16 @@ import { load as contactLoad } from '@/routes/contact';
           <!-- Toggle Button -->
           <button
             type="button"
-            class="flex items-center justify-center p-4 text-gray-500 border border-gray-200 rounded-full hs-collapse-toggle size-6 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" id="hs-navbar-header-floating-collapse"
-            aria-expanded="false" aria-controls="hs-navbar-header-floating" aria-label="Toggle navigation" data-hs-collapse="#hs-navbar-header-floating">
+            class="hs-collapse-toggle flex size-6 items-center justify-center rounded-full border border-gray-200 p-4 text-gray-500 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            id="hs-navbar-header-floating-collapse"
+            aria-expanded="false"
+            aria-controls="hs-navbar-header-floating"
+            aria-label="Toggle navigation"
+            data-hs-collapse="#hs-navbar-header-floating"
+          >
+            <Equal class="hs-collapse-open:hidden size-6 shrink-0" />
 
-            <IconMenu4 stroke="2.5" class="hs-collapse-open:hidden shrink-0 size-6" />
-
-            <IconX stroke="2.5" class="hidden hs-collapse-open:block shrink-0 size-5" />
-
+            <X class="hs-collapse-open:block hidden size-5 shrink-0" />
           </button>
           <!-- End Toggle Button -->
         </div>
@@ -47,42 +52,39 @@ import { load as contactLoad } from '@/routes/contact';
 
       <div
         id="hs-navbar-header-floating"
-        class="hidden overflow-hidden transition-all duration-300 hs-collapse basis-full grow md:block" aria-labelledby="hs-navbar-header-floating-collapse">
-
+        class="hs-collapse hidden grow basis-full overflow-hidden transition-all duration-300 md:block"
+        aria-labelledby="hs-navbar-header-floating-collapse"
+      >
         <div
-          class="flex flex-col gap-2 py-2 mt-3 md:flex-row md:items-center md:justify-end md:gap-3 md:mt-0 md:py-0 md:ps-7">
-
-          <NavLinkMode
-            :href="home().url"
-            :active="$page.url === home().url">
+          class="mt-3 flex flex-col gap-2 py-2 md:mt-0 md:flex-row md:items-center md:justify-end md:gap-3 md:py-0 md:ps-7"
+        >
+          <NavLinkMode :href="home().url" :active="$page.url === home().url">
             Home
           </NavLinkMode>
 
           <NavLinkMode
             :href="projectsIndex().url"
-            :active="$page.url.startsWith(projectsIndex().url)">
+            :active="$page.url.startsWith(projectsIndex().url)"
+          >
             Projects
           </NavLinkMode>
 
           <NavLinkMode
             :href="publicDownloadsIndex().url"
-            :active="$page.url.startsWith(publicDownloadsIndex().url)">
+            :active="$page.url.startsWith(publicDownloadsIndex().url)"
+          >
             Downloads
           </NavLinkMode>
 
           <NavLinkMode
             :href="contactLoad().url"
-            :active="$page.url.startsWith(contactLoad().url)">
+            :active="$page.url.startsWith(contactLoad().url)"
+          >
             Contact Me
           </NavLinkMode>
-
         </div>
-
       </div>
-
     </nav>
-
   </header>
   <!-- ========== END HEADER ========== -->
-
 </template>

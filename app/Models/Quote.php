@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -53,32 +56,39 @@ class Quote extends Model implements HasMedia
     /**
      * Get reference materials
      */
-    public function getReferenceFilesAttribute(): array
+    protected function referenceFiles(): Attribute
     {
-        return $this->getMedia('reference_materials')->map(function ($media) {
-            return [
-                'id' => $media->id,
-                'name' => $media->name,
-                'file_name' => $media->file_name,
-                'mime_type' => $media->mime_type,
-                'size' => $media->size,
-                'url' => $media->getUrl(),
-            ];
-        })->toArray();
+        return Attribute::make(
+            get: function () {
+                return $this->getMedia('reference_materials')->map(function ($media) {
+                    return [
+                        'id' => $media->id,
+                        'name' => $media->name,
+                        'file_name' => $media->file_name,
+                        'mime_type' => $media->mime_type,
+                        'size' => $media->size,
+                        'url' => $media->getUrl(),
+                    ];
+                })->toArray();
+            }
+        );
     }
 
-    public function scopePending($query)
+    #[Scope]
+    protected function pending(Builder $query): void
     {
-        return $query->where('status', 'pending');
+        $query->where('status', 'pending');
     }
 
-    public function scopeApproved($query)
+    #[Scope]
+    protected function approved(Builder $query): void
     {
-        return $query->where('status', 'approved');
+        $query->where('status', 'approved');
     }
 
-    public function scopeRejected($query)
+    #[Scope]
+    protected function rejected(Builder $query): void
     {
-        return $query->where('status', 'rejected');
+        $query->where('status', 'rejected');
     }
 }

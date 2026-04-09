@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -67,14 +70,21 @@ class Customer extends Model
     /**
      * Get the full name of the customer.
      */
-    public function getFullNameAttribute(): string
+    protected function fullName(): Attribute
     {
-        return trim($this->first_name.' '.$this->last_name);
+        return Attribute::make(
+            get: fn () => trim($this->first_name.' '.$this->last_name)
+        );
     }
 
-    public function getDisplayNameAttribute(): string
+    /**
+     * Get the display name of the customer.
+     */
+    protected function displayName(): Attribute
     {
-        return $this->company_name ?: $this->full_name ?: 'Untitled Customer';
+        return Attribute::make(
+            get: fn () => $this->company_name ?: $this->full_name ?: 'Untitled Customer'
+        );
     }
 
     /**
@@ -88,24 +98,27 @@ class Customer extends Model
     /**
      * Scope to get active customers.
      */
-    public function scopeActive($query)
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        return $query->where('status', 'active');
+        $query->where('status', 'active');
     }
 
     /**
      * Scope to get inactive customers.
      */
-    public function scopeInactive($query)
+    #[Scope]
+    protected function inactive(Builder $query): void
     {
-        return $query->where('status', 'inactive');
+        $query->where('status', 'inactive');
     }
 
     /**
      * Scope to get pending customers.
      */
-    public function scopePending($query)
+    #[Scope]
+    protected function pending(Builder $query): void
     {
-        return $query->where('status', 'pending');
+        $query->where('status', 'pending');
     }
 }

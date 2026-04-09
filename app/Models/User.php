@@ -8,19 +8,18 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Permission\Exceptions\RoleDoesNotExist;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, Notifiable, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, InteractsWithMedia, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -31,6 +30,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'password',
         'first_name',
         'last_name',
+        'job_title',
         'email',
         'password',
         'phone_number',
@@ -103,19 +103,10 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
         // First user to register becomes admin
         if (static::count() === 1) {
-            try {
-                $user->assignRole('admin');
-            } catch (RoleDoesNotExist $e) {
-                // Role doesn't exist yet - skip assignment
-                // This can happen in tests or before roles are seeded
-            }
+            $user->assignRole('admin');
         } else {
             // All other users get the user role
-            try {
-                $user->assignRole('user');
-            } catch (RoleDoesNotExist $e) {
-                // Role doesn't exist yet - skip assignment
-            }
+            $user->assignRole('user');
         }
     }
 
@@ -294,5 +285,71 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Roles assigned to this user
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_user')
+            ->withTimestamps();
+    }
+
+    /**
+     * Assign a role to the user
+     */
+    public function assignRole(string $roleName): void
+    {
+        $role = Role::firstOrCreate(['name' => $roleName]);
+        $this->roles()->syncWithoutDetaching([$role->id]);
+    }
+
+    /**
+     * Remove a role from the user
+     */
+    public function removeRole(string $roleName): void
+    {
+        $role = Role::where('name', $roleName)->first();
+        if ($role) {
+            $this->roles()->detach($role->id);
+        }
+    }
+
+    /**
+     * Check if user has a specific role
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()->where('name', $roleName)->exists();
+    }
+
+    /**
+     * Check if user has any of the given roles
+     */
+    public function hasAnyRole(array $roleNames): bool
+    {
+        return $this->roles()->whereIn('name', $roleNames)->exists();
+    }
+
+    /**
+     * Check if user has a specific permission (through roles)
+     */
+    public function hasPermission(string $permissionName): bool
+    {
+        foreach ($this->roles as $role) {
+            if ($role->hasPermission($permissionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if user has admin role
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
     }
 }
