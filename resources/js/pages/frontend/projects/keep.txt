@@ -1,0 +1,779 @@
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { index as projectIndexRoute, show as projectShow } from '@/routes/projects';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+// Project type is globally available from types/index.d.ts
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Project } from '@/types';
+import { useStorage } from '@vueuse/core';
+import { ArrowRight, ArrowUpRight, Building2, ExternalLink, Filter, Github, Search, Sparkles, X } from 'lucide-vue-next';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Props
+const props = defineProps<{
+    projects: {
+        data: Project[];
+    };
+    filters: {
+        search: string | null;
+        category: string | null;
+        status: string | null;
+        year: string | null;
+        sort: string;
+    };
+    categories: string[];
+    statuses: string[];
+    years: number[];
+}>();
+
+// Refs
+const heroRef = ref<HTMLElement>();
+const statsRef = ref<HTMLElement>();
+const filtersRef = ref<HTMLElement>();
+const projectsGridRef = ref<HTMLElement>();
+const projectCards = ref<HTMLElement[]>([]);
+
+// State
+const searchInput = ref(props.filters.search || '');
+const selectedCategory = ref(props.filters.category || 'all');
+const selectedStatus = ref(props.filters.status || 'all');
+const selectedYear = ref(props.filters.year || 'all');
+const sortBy = ref(props.filters.sort || 'newest');
+const viewMode = useStorage<'grid' | 'list'>('projects_view_mode', 'grid');
+const showFilters = ref(false);
+
+// Computed
+const filteredProjects = computed(() => props.projects.data);
+
+const sortedYears = computed(() => [...props.years].sort((a, b) => b - a));
+
+const featuredProjects = computed(() => props.projects.data.filter(p => p.is_featured).slice(0, 3));
+
+const projectStats = computed(() => ({
+    total: props.projects.data.length,
+    completed: props.projects.data.filter(p => p.status === 'completed').length,
+    featured: props.projects.data.filter(p => p.is_featured).length,
+}));
+
+const getStatusConfig = (status: string) => {
+    const config: Record<string, { label: string; color: string }> = {
+        completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' },
+        in_progress: { label: 'In Progress', color: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20' },
+        on_hold: { label: 'On Hold', color: 'bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/20' },
+        archived: { label: 'Archived', color: 'bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/20' },
+    };
+    return config[status] || { label: 'Unknown', color: '' };
+};
+
+const getProjectYear = (project: Project) => {
+    return project.created_at ? new Date(project.created_at).getFullYear() : 'N/A';
+};
+
+const clearFilters = () => {
+    searchInput.value = '';
+    selectedCategory.value = 'all';
+    selectedStatus.value = 'all';
+    selectedYear.value = 'all';
+    sortBy.value = 'newest';
+    applyFilters();
+};
+
+const applyFilters = () => {
+    const params: Record<string, any> = {};
+
+    if (searchInput.value.trim()) {
+        params.search = searchInput.value;
+    }
+
+    if (selectedCategory.value !== 'all') {
+        params.category = selectedCategory.value;
+    }
+
+    if (selectedStatus.value !== 'all') {
+        params.status = selectedStatus.value;
+    }
+
+    if (selectedYear.value !== 'all') {
+        params.year = selectedYear.value;
+    }
+
+    if (sortBy.value !== 'newest') {
+        params.sort = sortBy.value;
+    }
+
+    router.get(projectIndexRoute().url, params, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+};
+
+watch([searchInput, selectedCategory, selectedStatus, selectedYear, sortBy], () => {
+    const timeout = setTimeout(() => applyFilters(), 500);
+    return () => clearTimeout(timeout);
+});
+
+// GSAP Animations
+const animateHero = () => {
+    if (!heroRef.value) return;
+
+    const elements = heroRef.value.querySelectorAll('[data-animate]');
+
+    gsap.fromTo(elements,
+        { opacity: 0, y: 60 },
+        {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: 'power3.out',
+        }
+    );
+};
+
+const animateStats = () => {
+    if (!statsRef.value) return;
+
+    const statItems = statsRef.value.querySelectorAll('.stat-item');
+
+    gsap.fromTo(statItems,
+        { opacity: 0, scale: 0.8, y: 40 },
+        {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+                trigger: statsRef.value,
+                start: 'top 80%',
+                once: true,
+            },
+        }
+    );
+};
+
+const animateFilters = () => {
+    if (!filtersRef.value) return;
+
+    gsap.fromTo(filtersRef.value,
+        { opacity: 0, y: 30 },
+        {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: filtersRef.value,
+                start: 'top 85%',
+                once: true,
+            },
+        }
+    );
+};
+
+const animateProjectCards = () => {
+    if (!projectCards.value.length) return;
+
+    projectCards.value.forEach((card, index) => {
+        gsap.fromTo(card,
+            { opacity: 0, y: 80, scale: 0.95 },
+            {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.8,
+                delay: index * 0.08,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    once: true,
+                },
+            }
+        );
+    });
+};
+
+// Lifecycle
+onMounted(async () => {
+    await nextTick();
+
+    setTimeout(() => {
+        animateHero();
+        animateStats();
+        animateFilters();
+        animateProjectCards();
+    }, 100);
+});
+
+defineOptions({ layout: AppLayout });
+</script>
+
+<template>
+    <Head title="Projects | UltraShots Portfolio" />
+
+    <div class="min-h-screen bg-background">
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden bg-secondary/30 pt-20 pb-16 lg:pt-32 lg:pb-24">
+            <!-- Animated Mesh Gradient Background -->
+            <div class="absolute inset-0 opacity-40 dark:opacity-60">
+                <div class="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] animate-[spin_60s_linear_infinite] bg-[conic-gradient(from_0deg_at_50%_50%,var(--primary)_0%,transparent_50%,var(--primary)_100%)]" />
+            </div>
+            
+            <!-- Radial Gradient Blobs -->
+            <div class="absolute inset-0 opacity-50 dark:opacity-70">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(var(--color-primary)_0.15)_0%,transparent_50%)]" />
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,rgba(var(--color-primary)_0.2)_0%,transparent_50%)]" />
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_80%,rgba(var(--color-primary)_0.12)_0%,transparent_50%)]" />
+            </div>
+
+            <!-- Grid Pattern Overlay -->
+            <div class="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)]" />
+
+            <!-- Floating Orbs (Decorative) -->
+            <div class="absolute top-1/4 left-1/4 size-72 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 blur-3xl animate-pulse" />
+            <div class="absolute bottom-1/4 right-1/4 size-96 rounded-full bg-gradient-to-br from-primary/15 to-primary/5 blur-3xl animate-pulse [animation-delay:1s]" />
+            <div class="absolute top-1/2 right-1/3 size-64 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 blur-3xl animate-pulse [animation-delay:2s]" />
+
+            <!-- Noise Texture Overlay -->
+            <div class="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 400 400%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');" />
+
+            <div ref="heroRef" class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Eyebrow Badge -->
+                <div data-animate class="mb-6 flex justify-center">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-semibold text-primary backdrop-blur-sm shadow-lg shadow-primary/5">
+                        <Sparkles class="size-4" />
+                        Portfolio & Case Studies
+                    </span>
+                </div>
+
+                <!-- Main Headline -->
+                <div data-animate class="text-center space-y-6">
+                    <h1 class="font-display text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-7xl">
+                        Selected Works
+                    </h1>
+
+                    <p class="font-sans text-lg leading-relaxed text-muted-foreground max-w-3xl mx-auto sm:text-xl">
+                        A curated collection of brand identities, UI systems, and digital experiences that transformed businesses and exceeded expectations.
+                    </p>
+                </div>
+
+                <!-- Decorative Divider -->
+                <div data-animate class="mt-12 flex items-center justify-center gap-4">
+                    <div class="h-px w-20 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                    <div class="flex items-center gap-2">
+                        <div class="size-2 rounded-full bg-primary/40" />
+                        <div class="size-2 rounded-full bg-primary/60" />
+                        <div class="size-2 rounded-full bg-primary/40" />
+                    </div>
+                    <div class="h-px w-20 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                </div>
+
+                <!-- Stats -->
+                <div ref="statsRef" class="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-4 lg:mt-16">
+                    <div class="stat-item relative text-center">
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent blur-xl" />
+                        <p class="relative font-display text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
+                            {{ projectStats.total }}
+                        </p>
+                        <p class="relative mt-2 font-sans text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            Total Projects
+                        </p>
+                    </div>
+
+                    <div class="stat-item relative text-center">
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-transparent blur-xl" />
+                        <p class="relative font-display text-4xl font-bold text-emerald-600 dark:text-emerald-400 sm:text-5xl lg:text-6xl">
+                            {{ projectStats.completed }}
+                        </p>
+                        <p class="relative mt-2 font-sans text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            Completed
+                        </p>
+                    </div>
+
+                    <div class="stat-item relative text-center">
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-amber-500/5 to-transparent blur-xl" />
+                        <p class="relative font-display text-4xl font-bold text-amber-600 dark:text-amber-400 sm:text-5xl lg:text-6xl">
+                            {{ projectStats.featured }}
+                        </p>
+                        <p class="relative mt-2 font-sans text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            Featured
+                        </p>
+                    </div>
+
+                    <div class="stat-item relative text-center">
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent blur-xl" />
+                        <p class="relative font-display text-4xl font-bold text-primary sm:text-5xl lg:text-6xl">
+                            {{ sortedYears.length }}
+                        </p>
+                        <p class="relative mt-2 font-sans text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                            Years Active
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Projects -->
+        <section v-if="featuredProjects.length > 0" class="bg-background py-16 lg:py-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12 text-center">
+                    <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        Highlighted
+                    </span>
+                    <h2 class="mt-3 font-display text-3xl font-bold text-foreground sm:text-4xl">
+                        Featured Case Studies
+                    </h2>
+                    <p class="mt-4 font-sans text-muted-foreground">
+                        Deep dives into our most impactful brand transformations
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <Link
+                        v-for="project in featuredProjects"
+                        :key="project.uuid"
+                        :href="projectShow(project.uuid).url"
+                        class="group relative overflow-hidden rounded-3xl bg-background shadow-xl transition-all duration-500 hover:shadow-2xl"
+                    >
+                        <div class="relative aspect-[4/5] overflow-hidden">
+                            <img
+                                :src="project.poster_url || '/assets/placeholder-project.jpg'"
+                                :alt="project.name"
+                                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                loading="lazy"
+                            />
+
+                            <!-- Gradient Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent dark:from-black/95 dark:via-black/50" />
+
+                            <!-- Featured Badge -->
+                            <div class="absolute top-4 left-4">
+                                <span class="inline-flex items-center gap-2 rounded-full bg-white/95 dark:bg-foreground/95 backdrop-blur-sm px-4 py-2 text-sm font-semibold text-foreground shadow-lg">
+                                    <Sparkles class="size-4 text-amber-500 dark:text-amber-400" />
+                                    Featured
+                                </span>
+                            </div>
+
+                            <!-- View Project Button -->
+                            <div class="absolute top-4 right-4">
+                                <button class="flex size-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white transition-colors hover:bg-white/30 dark:hover:bg-white/40">
+                                    <ArrowUpRight class="size-5" />
+                                </button>
+                            </div>
+
+                            <!-- Content Overlay -->
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="font-display text-2xl font-bold text-white leading-tight">
+                                    {{ project.name }}
+                                </h3>
+                                <p class="mt-2 font-sans text-sm text-white/80 line-clamp-2">
+                                    {{ project.short_description }}
+                                </p>
+                                <div class="mt-4 flex items-center gap-3">
+                                    <Badge variant="outline" class="border-white/30 bg-white/10 text-white backdrop-blur-sm dark:border-white/40">
+                                        {{ project.category || 'Branding' }}
+                                    </Badge>
+                                    <Badge variant="outline" class="border-white/30 bg-white/10 text-white backdrop-blur-sm dark:border-white/40">
+                                        {{ getProjectYear(project) }}
+                                    </Badge>
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Projects Grid -->
+        <section class="bg-secondary/30 py-16 lg:py-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Section Header -->
+                <div class="mb-12">
+                    <h2 class="font-display text-3xl font-bold text-foreground sm:text-4xl">
+                        All Projects
+                    </h2>
+                    <p class="mt-3 font-sans text-muted-foreground">
+                        Browse our complete portfolio of brand transformations and digital experiences
+                    </p>
+                </div>
+
+                <!-- Filters -->
+                <div ref="filtersRef" class="mb-10 space-y-6">
+                    <!-- Search and View Toggle -->
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="relative flex-1 sm:max-w-md">
+                            <Search class="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                                v-model="searchInput"
+                                placeholder="Search projects..."
+                                class="h-12 pl-12 pr-4 font-sans bg-background border-input text-foreground placeholder:text-muted-foreground"
+                            />
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <ToggleGroup
+                                v-model="viewMode"
+                                type="single"
+                                class="rounded-lg border border-input bg-background p-1"
+                            >
+                                <ToggleGroupItem
+                                    value="grid"
+                                    aria-label="Grid view"
+                                    class="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground"
+                                >
+                                    <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    </svg>
+                                </ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="list"
+                                    aria-label="List view"
+                                    class="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground"
+                                >
+                                    <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                    </svg>
+                                </ToggleGroupItem>
+                            </ToggleGroup>
+
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                class="size-12 lg:hidden"
+                                @click="showFilters = !showFilters"
+                            >
+                                <Filter class="size-5" />
+                            </Button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div :class="['grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4', showFilters ? 'block' : 'hidden lg:grid']">
+                        <div class="relative">
+                            <select
+                                v-model="selectedCategory"
+                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <option value="all">All Categories</option>
+                                <option v-for="category in categories" :key="category" :value="category">
+                                    {{ category }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="relative">
+                            <select
+                                v-model="selectedStatus"
+                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <option value="all">All Status</option>
+                                <option v-for="status in statuses" :key="status" :value="status">
+                                    {{ getStatusConfig(status).label }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="relative">
+                            <select
+                                v-model="selectedYear"
+                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <option value="all">All Years</option>
+                                <option v-for="year in sortedYears" :key="year" :value="year.toString()">
+                                    {{ year }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="relative">
+                            <select
+                                v-model="sortBy"
+                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="name">Name A-Z</option>
+                                <option value="featured">Featured First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Active Filters -->
+                    <div
+                        v-if="searchInput || selectedCategory !== 'all' || selectedStatus !== 'all' || selectedYear !== 'all'"
+                        class="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-background p-4"
+                    >
+                        <span class="font-sans text-sm font-medium text-muted-foreground">Active filters:</span>
+
+                        <Badge
+                            v-if="searchInput"
+                            variant="secondary"
+                            class="flex items-center gap-1 bg-secondary/50 text-secondary-foreground dark:bg-secondary/30"
+                        >
+                            Search: {{ searchInput }}
+                            <X class="size-3 cursor-pointer" @click="searchInput = ''" />
+                        </Badge>
+
+                        <Badge
+                            v-if="selectedCategory !== 'all'"
+                            variant="secondary"
+                            class="flex items-center gap-1 bg-secondary/50 text-secondary-foreground dark:bg-secondary/30"
+                        >
+                            Category: {{ selectedCategory }}
+                            <X class="size-3 cursor-pointer" @click="selectedCategory = 'all'" />
+                        </Badge>
+
+                        <Badge
+                            v-if="selectedStatus !== 'all'"
+                            variant="secondary"
+                            class="flex items-center gap-1 bg-secondary/50 text-secondary-foreground dark:bg-secondary/30"
+                        >
+                            Status: {{ getStatusConfig(selectedStatus).label }}
+                            <X class="size-3 cursor-pointer" @click="selectedStatus = 'all'" />
+                        </Badge>
+
+                        <Badge
+                            v-if="selectedYear !== 'all'"
+                            variant="secondary"
+                            class="flex items-center gap-1 bg-secondary/50 text-secondary-foreground dark:bg-secondary/30"
+                        >
+                            Year: {{ selectedYear }}
+                            <X class="size-3 cursor-pointer" @click="selectedYear = 'all'" />
+                        </Badge>
+
+                        <Button variant="ghost" size="sm" @click="clearFilters" class="ml-auto text-muted-foreground hover:text-foreground">
+                            Clear All
+                        </Button>
+                    </div>
+                </div>
+
+                <!-- Results Count -->
+                <div class="mb-8 flex items-center justify-between">
+                    <p class="font-sans text-sm text-muted-foreground">
+                        Showing <span class="font-semibold text-foreground">{{ filteredProjects.length }}</span> of
+                        <span class="font-semibold text-foreground">{{ props.projects.data.length }}</span> projects
+                    </p>
+                </div>
+
+                <!-- Projects Grid/List -->
+                <div ref="projectsGridRef">
+                    <!-- Grid View -->
+                    <div v-if="viewMode === 'grid'" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        <Link
+                            v-for="project in filteredProjects"
+                            :key="project.uuid"
+                            :href="projectShow(project.uuid).url"
+                            :ref="(el: any) => { if (el) projectCards.push(el.$el) }"
+                            class="project-card group relative overflow-hidden rounded-3xl bg-background shadow-lg transition-all duration-500 hover:shadow-2xl"
+                        >
+                            <div class="relative aspect-[4/5] overflow-hidden">
+                                <img
+                                    :src="project.poster_url || '/assets/placeholder-project.jpg'"
+                                    :alt="project.name"
+                                    class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    loading="lazy"
+                                />
+
+                                <!-- Gradient Overlay -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                                <!-- Status Badge (Top Left) -->
+                                <div class="absolute top-4 left-4">
+                                    <Badge
+                                        :class="getStatusConfig(project.status).color"
+                                        variant="outline"
+                                        class="border-white/20 bg-white/95 backdrop-blur-sm font-sans text-xs"
+                                    >
+                                        {{ getStatusConfig(project.status).label }}
+                                    </Badge>
+                                </div>
+
+                                <!-- Featured Badge -->
+                                <div v-if="project.is_featured" class="absolute top-4 right-4">
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500 dark:bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
+                                        <Sparkles class="size-3" />
+                                        Featured
+                                    </span>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div class="absolute top-20 right-4 flex flex-col gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                    <button
+                                        v-if="project.live_url"
+                                        class="flex size-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white transition-colors hover:bg-white/30 dark:hover:bg-white/40"
+                                        @click.stop
+                                        @click.prevent
+                                    >
+                                        <a :href="project.live_url" target="_blank" rel="noopener noreferrer" class="size-full flex items-center justify-center">
+                                            <ExternalLink class="size-4" />
+                                        </a>
+                                    </button>
+                                    <button
+                                        v-if="project.github_url"
+                                        class="flex size-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white transition-colors hover:bg-white/30 dark:hover:bg-white/40"
+                                        @click.stop
+                                        @click.prevent
+                                    >
+                                        <a :href="project.github_url" target="_blank" rel="noopener noreferrer" class="size-full flex items-center justify-center">
+                                            <Github class="size-4" />
+                                        </a>
+                                    </button>
+                                </div>
+
+                                <!-- Content Overlay (Bottom) -->
+                                <div class="absolute bottom-0 left-0 right-0 p-6">
+                                    <!-- Client/Category -->
+                                    <div class="mb-3 flex items-center gap-2">
+                                        <Badge variant="outline" class="border-white/30 bg-white/10 text-white backdrop-blur-sm font-sans text-xs">
+                                            {{ project.category || 'Branding' }}
+                                        </Badge>
+                                        <span class="font-sans text-xs text-white/70">
+                                            {{ getProjectYear(project) }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Title -->
+                                    <h3 class="font-display text-2xl font-bold text-white leading-tight">
+                                        {{ project.name }}
+                                    </h3>
+
+                                    <!-- Description -->
+                                    <p class="mt-2 font-sans text-sm text-white/80 line-clamp-2">
+                                        {{ project.short_description }}
+                                    </p>
+
+                                    <!-- CTA Button -->
+                                    <div class="mt-4">
+                                        <Button
+                                            variant="secondary"
+                                            class="w-full gap-2 font-sans"
+                                        >
+                                            View Case Study
+                                            <ArrowRight class="size-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
+                    </div>
+
+                    <!-- List View -->
+                    <div v-else class="space-y-6">
+                        <Link
+                            v-for="project in filteredProjects"
+                            :key="project.uuid"
+                            :href="projectShow(project.uuid).url"
+                            :ref="(el: any) => { if (el) projectCards.push(el.$el) }"
+                            class="project-card group flex gap-6 overflow-hidden rounded-2xl bg-background p-4 shadow-md transition-all duration-300 hover:shadow-xl dark:bg-card dark:border dark:border-border"
+                        >
+                            <div class="relative h-40 w-40 shrink-0 overflow-hidden rounded-xl">
+                                <img
+                                    :src="project.poster_url || '/assets/placeholder-project.jpg'"
+                                    :alt="project.name"
+                                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    loading="lazy"
+                                />
+                            </div>
+
+                            <div class="flex flex-1 flex-col justify-between">
+                                <div>
+                                    <div class="mb-2 flex items-center gap-2">
+                                        <Badge variant="outline" class="font-sans text-xs">
+                                            {{ project.category || 'Branding' }}
+                                        </Badge>
+                                        <Badge :class="getStatusConfig(project.status).color" variant="outline" class="font-sans text-xs">
+                                            {{ getStatusConfig(project.status).label }}
+                                        </Badge>
+                                        <span v-if="project.is_featured" class="inline-flex items-center gap-1 rounded-full bg-amber-500 dark:bg-amber-600 px-2 py-0.5 text-xs font-semibold text-white">
+                                            <Sparkles class="size-3" />
+                                            Featured
+                                        </span>
+                                    </div>
+
+                                    <h3 class="font-display text-xl font-bold text-foreground group-hover:text-primary">
+                                        {{ project.name }}
+                                    </h3>
+
+                                    <p class="mt-1 font-sans text-sm text-muted-foreground line-clamp-2">
+                                        {{ project.short_description }}
+                                    </p>
+                                </div>
+
+                                <div class="mt-3 flex items-center justify-between">
+                                    <div class="flex items-center gap-4 font-sans text-xs text-muted-foreground">
+                                        <span class="flex items-center gap-1">
+                                            <Building2 class="size-3" />
+                                            {{ getProjectYear(project) }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            class="gap-1 text-xs text-muted-foreground hover:text-foreground"
+                                        >
+                                            View Details
+                                            <ArrowUpRight class="size-3" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
+                    </div>
+
+                    <!-- No Results -->
+                    <div v-if="filteredProjects.length === 0" class="py-24 text-center">
+                        <div class="mx-auto mb-6 flex size-20 items-center justify-center rounded-full bg-muted dark:bg-secondary/30">
+                            <Search class="size-10 text-muted-foreground" />
+                        </div>
+                        <h3 class="font-display text-2xl font-bold text-foreground">
+                            No projects found
+                        </h3>
+                        <p class="mt-3 font-sans text-muted-foreground">
+                            Try adjusting your search criteria or clearing the filters.
+                        </p>
+                        <Button variant="outline" @click="clearFilters" class="mt-6">
+                            Clear Filters
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</template>
+
+<style scoped>
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.bg-grid-black\/\[0\.02\] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(0 0 0 / 0.02)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+}
+
+.dark .bg-grid-white\/\[0\.02\] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+}
+</style>
