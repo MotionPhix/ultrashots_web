@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\DownloadController;
 use App\Http\Controllers\Frontend\HomeController;
@@ -14,6 +15,17 @@ Route::get(
     '/',
     [HomeController::class, 'index']
 )->name('home');
+
+// Chat Route
+Route::get(
+    '/chat',
+    [ChatController::class, 'index']
+)->name('chat.index');
+
+Route::post(
+    '/chat',
+    [ChatController::class, 'chat']
+)->name('chat.send');
 
 // Contact Routes
 Route::prefix('get-in-touch')->group(function () {

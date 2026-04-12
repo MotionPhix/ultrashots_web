@@ -3,7 +3,6 @@ import ApplicationLogo from '@/components/ApplicationLogo.vue';
 import { load as contactLoad } from '@/routes/contact';
 import { home } from '@/routes/index';
 import { index as projectsIndex } from '@/routes/projects';
-import { index as publicDownloadsIndex } from '@/routes/public/downloads';
 import { Link } from '@inertiajs/vue3';
 import BetterLink from '../BetterLink.vue';
 </script>
@@ -88,16 +87,6 @@ import BetterLink from '../BetterLink.vue';
               :active="$page.url.startsWith(projectsIndex().url)"
             >
               Work
-            </BetterLink>
-          </div>
-
-          <div>
-            <BetterLink
-              as="button"
-              :href="publicDownloadsIndex().url"
-              :active="$page.url.startsWith(publicDownloadsIndex().url)"
-            >
-              Downloads
             </BetterLink>
           </div>
 

@@ -2,6 +2,7 @@
 import AppContent from '@/components/AppContent.vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppShell from '@/components/AppShell.vue';
+import ChatFAB from '@/components/frontend/ChatFAB.vue';
 import type { BreadcrumbItemType } from '@/types';
 import Footnote from '@/components/frontend/Footnote.vue';
 
@@ -22,5 +23,8 @@ withDefaults(defineProps<Props>(), {
 
       <Footnote />
     </AppContent>
+    
+    <!-- Floating Chat Button -->
+    <ChatFAB />
   </AppShell>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { Home, Briefcase, Download, Mail, FileText, Menu } from 'lucide-vue-next';
+import { Home, Briefcase, Mail, FileText, Menu } from 'lucide-vue-next';
 import ApplicationLogo from '@/components/ApplicationLogo.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils';
 
 import { home } from '@/routes/index';
 import { index as projectsIndex } from '@/routes/projects';
-import { index as publicDownloadsIndex } from '@/routes/public/downloads';
 import { index as quoteIndex } from '@/routes/quote';
 import { load as contactLoad } from '@/routes/contact';
 
@@ -33,12 +32,6 @@ const navigationItems = [
     href: () => projectsIndex().url,
     icon: Briefcase,
     current: () => $page.url.startsWith(projectsIndex().url)
-  },
-  {
-    name: 'Downloads',
-    href: () => publicDownloadsIndex().url,
-    icon: Download,
-    current: () => $page.url.startsWith(publicDownloadsIndex().url)
   },
   {
     name: 'Get Quote',

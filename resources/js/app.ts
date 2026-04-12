@@ -1,4 +1,4 @@
-import { withInertiaModal } from '@inertiaui/modal-vue';
+import { withInertiaModal, putConfig } from '@inertiaui/modal-vue';
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -13,6 +13,31 @@ configureEcho({
 });
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+putConfig({
+  type: 'modal',
+  navigate: false,
+  useNativeDialog: true,
+  appElement: '#app',
+  modal: {
+    closeButton: false,
+    closeExplicitly: false,
+    closeOnClickOutside: false,
+    maxWidth: 'xl',
+    paddingClasses: '0',
+    panelClasses: '',
+    position: 'center',
+  },
+  slideover: {
+    closeButton: true,
+    closeExplicitly: false,
+    closeOnClickOutside: false,
+    maxWidth: 'sm',
+    paddingClasses: '0',
+    position: 'left',
+  },
+})
+
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

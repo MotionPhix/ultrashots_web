@@ -34,7 +34,6 @@ import { toUrl, urlIsActive } from '@/lib/utils';
 import { home, register } from '@/routes';
 import { load as loadContactForm } from '@/routes/contact';
 import { index as projectsIndex } from '@/routes/projects';
-import { index as publicDownloadsIndex } from '@/routes/public/downloads';
 import { index as quoteIndex } from '@/routes/quote';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
@@ -45,7 +44,6 @@ import {
   LogIn,
   Mail,
   Menu,
-  MessageSquare,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -82,11 +80,6 @@ const mainNavItems: NavItem[] = [
     title: 'Work',
     href: projectsIndex().url,
     icon: Briefcase,
-  },
-  {
-    title: 'Chat',
-    href: publicDownloadsIndex().url,
-    icon: MessageSquare,
   },
   {
     title: 'Contact',

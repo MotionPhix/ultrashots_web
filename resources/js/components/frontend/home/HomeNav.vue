@@ -7,7 +7,6 @@ import { storeToRefs } from 'pinia';
 import { load as contactLoad } from '@/actions/App/Http/Controllers/Frontend/ContactController';
 import { index as projectsIndex } from '@/actions/App/Http/Controllers/Frontend/ProjectController';
 import { index as quoteIndex } from '@/actions/App/Http/Controllers/Frontend/QuoteController';
-import { index as downloadsIndex } from '@/actions/App/Http/Controllers/Frontend/DownloadController';
 
 defineProps<{
     owner: LandingOwner;
@@ -19,7 +18,6 @@ const { mobileNavigationOpen } = storeToRefs(homepageContentStore);
 const navigationItems = [
     { label: 'Work', href: projectsIndex.url() },
     { label: 'Services', href: quoteIndex.url() },
-    { label: 'Downloads', href: downloadsIndex.url() },
     { label: 'Contact', href: contactLoad.url() },
 ];
 </script>
