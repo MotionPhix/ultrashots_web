@@ -29,33 +29,32 @@ defineProps<{
                 </div>
 
                 <div class="mt-10 flex shrink-0 flex-col gap-4 sm:flex-row lg:mt-0">
-                    <Button
-                        v-if="calendlyUrl"
-                        :as="'a'"
-                        :href="calendlyUrl"
-                        target="_blank"
-                        rel="noreferrer"
-                        class="gap-2 bg-background px-8 py-3.5 text-sm font-bold text-foreground hover:bg-background/90 transition-all duration-200 shadow-lg"
-                    >
-                        <CalendarDays class="size-4" />
-                        {{ cta.calendly_label }}
-                    </Button>
+<!--                    <Button-->
+<!--                        v-if="calendlyUrl"-->
+<!--                        :as="'a'"-->
+<!--                        :href="calendlyUrl"-->
+<!--                        target="_blank"-->
+<!--                        rel="noreferrer"-->
+<!--                        class="gap-2 bg-background px-8 py-3.5 text-sm font-bold text-foreground hover:bg-background/90 transition-all duration-200 shadow-lg"-->
+<!--                    >-->
+<!--                        <CalendarDays class="size-4" />-->
+<!--                        {{ cta.calendly_label }}-->
+<!--                    </Button>-->
+
+<!--                    <Button-->
+<!--                        v-else-->
+<!--                        :as="Link"-->
+<!--                        :href="quoteIndex().url"-->
+<!--                        class="gap-2 bg-background !h-12 text-sm font-bold text-foreground hover:bg-background/90 rounded-full"-->
+<!--                    >-->
+<!--                        <CalendarDays class="size-4" />-->
+<!--                        {{ cta.calendly_label }}-->
+<!--                    </Button>-->
 
                     <Button
-                        v-else
                         :as="Link"
                         :href="quoteIndex().url"
-                        class="gap-2 bg-background !h-12 text-sm font-bold text-foreground hover:bg-background/90 rounded-full"
-                    >
-                        <CalendarDays class="size-4" />
-                        {{ cta.calendly_label }}
-                    </Button>
-
-                    <Button
-                        :as="Link"
-                        :href="quoteIndex().url"
-                        variant="outline"
-                        class="gap-2 border-primary-foreground/30 bg-transparent h-12 text-sm font-semibold text-primary-foreground hover:bg-primary-foreground/10 rounded-full"
+                        class="bg-background border-primary-foreground/30 h-12 !font-heading font-bold text-accent-foreground hover:bg-background/90 rounded-full"
                     >
                         Get a full quote
                         <ArrowRight class="size-4" />
@@ -68,7 +67,7 @@ defineProps<{
             </div>
 
             <!-- Two-column layout: Benefits + Contact Form -->
-            <div class="mt-12 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
+            <div class="mt-12 grid gap-8 lg:grid-cols-[1fr_1.2fr] max-w-4xl mx-auto">
                 <!-- Left: Value proposition -->
                  <article>
                   <div class="p-8">

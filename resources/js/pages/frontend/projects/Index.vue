@@ -778,7 +778,6 @@ defineOptions({ layout: AppLayout });
                         'Schedule a Call',
                         'Start Something Amazing',
                     ]"
-                    availability-date="Immediately"
                     cta-text="Get in Touch"
                     cta-href="/contact"
                     :switch-interval="3500"

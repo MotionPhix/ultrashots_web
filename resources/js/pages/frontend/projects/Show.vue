@@ -1,805 +1,635 @@
 <script setup lang="ts">
-import AppLayout from "@/layouts/AppLayout.vue";
-import { Project } from "@/types";
-import { Head, Link } from "@inertiajs/vue3";
+import AppLayout from '@/layouts/AppLayout.vue';
+import { Project } from '@/types';
+import { Head, Link } from '@inertiajs/vue3';
 import { index as projectsIndex, show as projectsShow } from '@/routes/projects';
 import { computed, onMounted, ref, nextTick, onUnmounted } from 'vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { cn } from '@/lib/utils';
 
-// Shadcn-Vue Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import AnimatedCTAWithAvailability from '@/components/frontend/ui/AnimatedCTAWithAvailability.vue';
 
-// Icons
 import {
-  ArrowLeft,
-  ArrowUpRight,
-  Github,
-  Figma,
-  Eye,
-  Calendar,
-  User,
-  Tag,
-  Code,
-  Star,
-  Globe,
-  Target,
-  CheckCircle2,
-  AlertCircle,
-  Zap,
-  Download,
-  ImageIcon,
-  Award,
-  Layers,
-  Heart,
-  Share2,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Maximize2
-} from "lucide-vue-next";
+    ArrowLeft,
+    ArrowRight,
+    ArrowUpRight,
+    Github,
+    Figma,
+    ExternalLink,
+    Sparkles,
+    Target,
+    Lightbulb,
+    Layers,
+    Zap,
+     TrendingUp,
+    Heart,
+    Maximize2,
+    ChevronLeft,
+    ChevronRight,
+    X,
+    CheckCircle2,
+    Monitor,
+    Palette,
+    PenTool,
+    Users,
+    Eye,
+    Star,
+    Quote,
+    CircleDot,
+    BarChart3,
+    Award,
+} from 'lucide-vue-next';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const props = defineProps<{
-  project: {
-    data: Project;
-    meta?: any;
-  };
-  relatedProjects?: {
-    data: Project[];
-    meta?: any;
-  };
+    project: {
+        data: Project;
+        meta?: any;
+    };
+    relatedProjects?: {
+        data: Project[];
+        meta?: any;
+    };
 }>();
 
-defineOptions({
-  layout: AppLayout
-});
+defineOptions({ layout: AppLayout });
 
-// Refs for animations
+// Refs
 const heroRef = ref<HTMLElement>();
-const contentRef = ref<HTMLElement>();
+const heroContentRef = ref<HTMLElement>();
+const overviewRef = ref<HTMLElement>();
+const briefRef = ref<HTMLElement>();
+const resultsRef = ref<HTMLElement>();
+const processRef = ref<HTMLElement>();
+const solutionRef = ref<HTMLElement>();
 const galleryRef = ref<HTMLElement>();
-const techStackRef = ref<HTMLElement>();
-const featuresRef = ref<HTMLElement>();
+const testimonialRef = ref<HTMLElement>();
+const ctaRef = ref<HTMLElement>();
+const nextProjectRef = ref<HTMLElement>();
 
-// State
-const selectedImageIndex = ref(0);
-const isImageDialogOpen = ref(false);
-
-// Store animation instances for cleanup
 const animations = ref<gsap.core.Tween[]>([]);
 
-// Computed properties
+// Computed
 const projectData = computed(() => props.project.data);
 const relatedProjectsData = computed(() => props.relatedProjects?.data || []);
 
 const heroImage = computed(() => {
-  if (projectData.value.poster_url) {
-    return projectData.value.poster_url;
-  }
-
-  if (projectData.value.gallery_images && projectData.value.gallery_images.length > 0) {
-    return projectData.value.gallery_images[0].large_url || projectData.value.gallery_images[0].url;
-  }
-
-  return '/assets/placeholder-project.jpg';
+    if (projectData.value.poster_url) return projectData.value.poster_url;
+    if (projectData.value.gallery_images?.length > 0) {
+        return projectData.value.gallery_images[0].large_url || projectData.value.gallery_images[0].url;
+    }
+    return '/assets/placeholder-project.jpg';
 });
 
-const galleryImages = computed(() => {
-  if (projectData.value.gallery_images && projectData.value.gallery_images.length > 0) {
-    return projectData.value.gallery_images;
-  }
-  return [];
-});
+const galleryImages = computed(() => projectData.value.gallery_images || []);
 
 const customerName = computed(() => {
-  const customer = projectData.value.customer;
-  if (customer?.display_name) return customer.display_name;
-  if (customer?.company_name) return customer.company_name;
-  if (customer?.full_name) return customer.full_name;
-  if (customer?.first_name || customer?.last_name) {
-    return `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
-  }
-  return 'Client';
+    const customer = projectData.value.customer;
+    if (customer?.company_name) return customer.company_name;
+    if (customer?.display_name) return customer.display_name;
+    return `${customer?.first_name || ''} ${customer?.last_name || ''}`.trim() || 'Client';
 });
 
 const projectYear = computed(() => {
-  if (projectData.value.end_date) {
-    return new Date(projectData.value.end_date).getFullYear();
-  }
-  if (projectData.value.created_at) {
-    return new Date(projectData.value.created_at).getFullYear();
-  }
-  return new Date().getFullYear();
+    if (projectData.value.end_date) return new Date(projectData.value.end_date).getFullYear();
+    if (projectData.value.created_at) return new Date(projectData.value.created_at).getFullYear();
+    return new Date().getFullYear();
+});
+
+const projectMetrics = computed(() => {
+    const results = projectData.value.results;
+    if (!results) return [];
+    if (Array.isArray(results)) {
+        return results.map((item: any) => ({
+            label: item.metric || item.label || 'Improvement',
+            value: item.value || '+30%',
+        }));
+    }
+    if (typeof results === 'string') {
+        try {
+            const parsed = JSON.parse(results);
+            if (Array.isArray(parsed)) {
+                return parsed.map((item: any) => ({
+                    label: item.metric || item.label || 'Improvement',
+                    value: item.value || '+30%',
+                }));
+            }
+        } catch {
+            return [];
+        }
+    }
+    return [];
 });
 
 const externalLinks = computed(() => {
-  const links = [];
-  const project = projectData.value;
-
-  if (project.live_url) {
-    links.push({
-      name: 'Live Site',
-      url: project.live_url,
-      icon: ArrowUpRight,
-      variant: 'default' as const
-    });
-  }
-
-  if (project.github_url) {
-    links.push({
-      name: 'GitHub',
-      url: project.github_url,
-      icon: Github,
-      variant: 'outline' as const
-    });
-  }
-
-  if (project.figma_url) {
-    links.push({
-      name: 'Figma',
-      url: project.figma_url,
-      icon: Figma,
-      variant: 'outline' as const
-    });
-  }
-
-  return links;
+    const links = [];
+    const project = projectData.value;
+    if (project.live_url) links.push({ name: 'Live Site', url: project.live_url, icon: ArrowUpRight });
+    if (project.github_url) links.push({ name: 'GitHub', url: project.github_url, icon: Github });
+    if (project.figma_url) links.push({ name: 'Figma', url: project.figma_url, icon: Figma });
+    if (project.behance_url) links.push({ name: 'Behance', url: project.behance_url, icon: ExternalLink });
+    if (project.dribbble_url) links.push({ name: 'Dribbble', url: project.dribbble_url, icon: ExternalLink });
+    return links;
 });
 
-const statusConfig = computed(() => {
-  const configs = {
-    'not_started': { color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300', icon: AlertCircle },
-    'in_progress': { color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300', icon: Zap },
-    'on_hold': { color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300', icon: AlertCircle },
-    'completed': { color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300', icon: CheckCircle2 },
-    'cancelled': { color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300', icon: X }
-  };
-  return configs[projectData.value.status as keyof typeof configs] || configs.completed;
-});
+// Image Modal
+const selectedImageIndex = ref(0);
+const isImageDialogOpen = ref(false);
 
-// Methods
 const openImageModal = (index: number) => {
-  selectedImageIndex.value = index;
-  isImageDialogOpen.value = true;
+    selectedImageIndex.value = index;
+    isImageDialogOpen.value = true;
 };
 
 const nextImage = () => {
-  selectedImageIndex.value = (selectedImageIndex.value + 1) % galleryImages.value.length;
+    selectedImageIndex.value = (selectedImageIndex.value + 1) % galleryImages.value.length;
 };
 
 const prevImage = () => {
-  selectedImageIndex.value = selectedImageIndex.value === 0
-    ? galleryImages.value.length - 1
-    : selectedImageIndex.value - 1;
+    selectedImageIndex.value = selectedImageIndex.value === 0 ? galleryImages.value.length - 1 : selectedImageIndex.value - 1;
 };
 
-const getCustomerInitials = (customer: any) => {
-  if (!customer) return 'CL';
-  return `${customer.first_name?.[0] || ''}${customer.last_name?.[0] || ''}`.toUpperCase();
-};
-
-const shareProject = async (): Promise<void> => {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
-    return;
-  }
-
-  const url = window.location.href;
-  const title = projectData.value.name;
-
-  try {
-    if (typeof navigator.share === 'function') {
-      await navigator.share({ title, url });
-
-      return;
-    }
-
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(url);
-    }
-  } catch {
-    // Ignore cancellation/fallback errors from share dialog and clipboard APIs.
-  }
-};
-
-// Helper function to safely query elements
-const safeQuerySelector = (selector: string, container?: HTMLElement): NodeListOf<Element> | null => {
-  try {
-    const elements = container ? container.querySelectorAll(selector) : document.querySelectorAll(selector);
-    return elements.length > 0 ? elements : null;
-  } catch (error) {
-    console.warn(`Failed to query selector: ${selector}`, error);
-    return null;
-  }
-};
-
-// Helper function to check if element exists and has getBoundingClientRect
+// Helpers
 const isValidElement = (element: any): element is HTMLElement => {
-  return element &&
-    typeof element.getBoundingClientRect === 'function' &&
-    element.nodeType === Node.ELEMENT_NODE;
+    return element && typeof element.getBoundingClientRect === 'function' && element.nodeType === Node.ELEMENT_NODE;
 };
 
 // Animations
 onMounted(async () => {
-  await nextTick();
+    await nextTick();
 
-  // Wait a bit more to ensure all elements are rendered
-  setTimeout(() => {
-    try {
-      // Hero animation
-      if (heroRef.value && isValidElement(heroRef.value)) {
-        const heroAnimation = gsap.fromTo(heroRef.value,
-          { opacity: 0, scale: 1.1 },
-          { opacity: 1, scale: 1, duration: 1.2, ease: 'power3.out' }
-        );
-        animations.value.push(heroAnimation);
-      }
+    setTimeout(() => {
+        try {
+            // Hero parallax
+            if (heroRef.value && isValidElement(heroRef.value)) {
+                const heroImg = heroRef.value.querySelector('img');
+                if (heroImg) {
+                    const anim = gsap.fromTo(heroImg,
+                        { scale: 1.15, opacity: 0 },
+                        { scale: 1, opacity: 1, duration: 1.5, ease: 'power3.out' }
+                    );
+                    animations.value.push(anim);
+                }
 
-      // Content stagger animation
-      if (contentRef.value && isValidElement(contentRef.value) && contentRef.value.children.length > 0) {
-        const contentAnimation = gsap.fromTo(contentRef.value.children,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.2,
-            ease: 'power3.out',
-            delay: 0.3
-          }
-        );
-        animations.value.push(contentAnimation);
-      }
-
-      // Tech stack animation
-      if (techStackRef.value && isValidElement(techStackRef.value)) {
-        const techBadges = safeQuerySelector('.tech-badge', techStackRef.value);
-        if (techBadges && techBadges.length > 0) {
-          const techAnimation = gsap.fromTo(techBadges,
-            { opacity: 0, scale: 0.8, y: 20 },
-            {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              duration: 0.5,
-              stagger: 0.1,
-              ease: 'back.out(1.7)',
-              scrollTrigger: {
-                trigger: techStackRef.value,
-                start: 'top bottom-=100',
-                toggleActions: 'play none none reverse'
-              }
+                // Hero content reveal
+                if (heroContentRef.value) {
+                    const anim = gsap.fromTo(heroContentRef.value.children,
+                        { y: 60, opacity: 0 },
+                        { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power3.out', delay: 0.3 }
+                    );
+                    animations.value.push(anim);
+                }
             }
-          );
-          animations.value.push(techAnimation);
-        }
-      }
 
-      // Features animation
-      if (featuresRef.value && isValidElement(featuresRef.value)) {
-        const featureItems = safeQuerySelector('.feature-item', featuresRef.value);
-        if (featureItems && featureItems.length > 0) {
-          const featuresAnimation = gsap.fromTo(featureItems,
-            { opacity: 0, x: -30 },
-            {
-              opacity: 1,
-              x: 0,
-              duration: 0.6,
-              stagger: 0.1,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: featuresRef.value,
-                start: 'top bottom-=100',
-                toggleActions: 'play none none reverse'
-              }
+            // Overview
+            if (overviewRef.value && isValidElement(overviewRef.value)) {
+                const anim = gsap.fromTo(overviewRef.value.children,
+                    { y: 40, opacity: 0 },
+                    {
+                        y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'power3.out',
+                        scrollTrigger: { trigger: overviewRef.value, start: 'top 85%', toggleActions: 'play none none reverse' }
+                    }
+                );
+                animations.value.push(anim);
             }
-          );
-          animations.value.push(featuresAnimation);
-        }
-      }
 
-      // Gallery animation
-      if (galleryRef.value && isValidElement(galleryRef.value)) {
-        const galleryItems = safeQuerySelector('.gallery-item', galleryRef.value);
-        if (galleryItems && galleryItems.length > 0) {
-          const galleryAnimation = gsap.fromTo(galleryItems,
-            { opacity: 0, y: 30, scale: 0.9 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.6,
-              stagger: 0.1,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: galleryRef.value,
-                start: 'top bottom-=100',
-                toggleActions: 'play none none reverse'
-              }
+            // Results counter
+            if (resultsRef.value && isValidElement(resultsRef.value)) {
+                const anim = gsap.fromTo(resultsRef.value.children,
+                    { scale: 0.9, opacity: 0, y: 40 },
+                    {
+                        scale: 1, opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'back.out(1.4)',
+                        scrollTrigger: { trigger: resultsRef.value, start: 'top 80%', toggleActions: 'play none none reverse' }
+                    }
+                );
+                animations.value.push(anim);
             }
-          );
-          animations.value.push(galleryAnimation);
-        }
-      }
 
-      // Parallax effect for hero image
-      if (heroRef.value && isValidElement(heroRef.value)) {
-        const heroImage = heroRef.value.querySelector('img');
-        if (heroImage && isValidElement(heroImage)) {
-          const parallaxAnimation = gsap.to(heroImage, {
-            yPercent: -20,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: heroRef.value,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true
+            // Process steps
+            if (processRef.value && isValidElement(processRef.value)) {
+                const steps = processRef.value.querySelectorAll('.process-step');
+                if (steps.length > 0) {
+                    const anim = gsap.fromTo(steps,
+                        { x: -60, opacity: 0 },
+                        {
+                            x: 0, opacity: 1, duration: 0.7, stagger: 0.15, ease: 'power3.out',
+                            scrollTrigger: { trigger: processRef.value, start: 'top 80%', toggleActions: 'play none none reverse' }
+                        }
+                    );
+                    animations.value.push(anim);
+                }
             }
-          });
-          animations.value.push(parallaxAnimation);
+
+            // Solution
+            if (solutionRef.value && isValidElement(solutionRef.value)) {
+                const anim = gsap.fromTo(solutionRef.value.children,
+                    { y: 60, opacity: 0 },
+                    {
+                        y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power3.out',
+                        scrollTrigger: { trigger: solutionRef.value, start: 'top 80%', toggleActions: 'play none none reverse' }
+                    }
+                );
+                animations.value.push(anim);
+            }
+
+            // Gallery
+            if (galleryRef.value && isValidElement(galleryRef.value)) {
+                const items = galleryRef.value.querySelectorAll('.gallery-item');
+                if (items.length > 0) {
+                    const anim = gsap.fromTo(items,
+                        { y: 80, opacity: 0 },
+                        {
+                            y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'power3.out',
+                            scrollTrigger: { trigger: galleryRef.value, start: 'top 80%', toggleActions: 'play none none reverse' }
+                        }
+                    );
+                    animations.value.push(anim);
+                }
+            }
+
+            // Testimonial
+            if (testimonialRef.value && isValidElement(testimonialRef.value)) {
+                const anim = gsap.fromTo(testimonialRef.value,
+                    { y: 60, opacity: 0 },
+                    {
+                        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+                        scrollTrigger: { trigger: testimonialRef.value, start: 'top 85%', toggleActions: 'play none none reverse' }
+                    }
+                );
+                animations.value.push(anim);
+            }
+
+            // CTA
+            if (ctaRef.value && isValidElement(ctaRef.value)) {
+                const anim = gsap.fromTo(ctaRef.value,
+                    { y: 60, opacity: 0 },
+                    {
+                        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+                        scrollTrigger: { trigger: ctaRef.value, start: 'top 85%', toggleActions: 'play none none reverse' }
+                    }
+                );
+                animations.value.push(anim);
+            }
+
+            // Next project
+            if (nextProjectRef.value && isValidElement(nextProjectRef.value)) {
+                const anim = gsap.fromTo(nextProjectRef.value,
+                    { y: 60, opacity: 0 },
+                    {
+                        y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
+                        scrollTrigger: { trigger: nextProjectRef.value, start: 'top 85%', toggleActions: 'play none none reverse' }
+                    }
+                );
+                animations.value.push(anim);
+            }
+
+        } catch (error) {
+            console.warn('Animation setup failed:', error);
         }
-      }
-    } catch (error) {
-      console.warn('Animation setup failed:', error);
-    }
-  }, 100);
+    }, 50);
 });
 
-// Cleanup animations on unmount
 onUnmounted(() => {
-  animations.value.forEach(animation => {
-    if (animation && typeof animation.kill === 'function') {
-      animation.kill();
-    }
-  });
-  ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    animations.value.forEach(a => a.kill?.());
+    ScrollTrigger.getAll().forEach(t => t.kill());
 });
 </script>
 
 <template>
-  <Head :title="`${projectData.name} - Portfolio Project`">
-    <meta name="description" :content="projectData.short_description || projectData.description?.substring(0, 160)" />
-    <meta property="og:title" :content="projectData.name" />
-    <meta property="og:description" :content="projectData.short_description || projectData.description?.substring(0, 160)" />
-    <meta property="og:image" :content="heroImage" />
-    <meta property="og:type" content="article" />
-  </Head>
+    <Head :title="`${projectData.name} | UltraShots Portfolio`">
+        <meta name="description" :content="projectData.short_description || projectData.description?.substring(0, 160)" />
+        <meta property="og:title" :content="projectData.name" />
+        <meta property="og:description" :content="projectData.short_description || projectData.description?.substring(0, 160)" />
+        <meta property="og:image" :content="heroImage" />
+    </Head>
 
-  <div class="min-h-screen bg-background">
-    <!-- Navigation -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-      <Link
-        :as="Button"
-        variant="ghost" size="sm" class="group"
-        :href="projectsIndex().url">
-        <ArrowLeft class="h-4 w-4 mr-2 transition-transform group-hover:-translate-x-1" />
-        All work
-      </Link>
-    </div>
-
-    <!-- Hero Section -->
-    <section ref="heroRef" class="relative overflow-hidden">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="relative aspect-video lg:aspect-21/9 rounded-2xl overflow-hidden bg-muted">
-          <img
-            :src="heroImage"
-            :alt="`${projectData.name} hero image`"
-            class="w-full h-full object-cover"
-          />
-
-          <!-- Overlay -->
-          <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
-
-          <!-- Content Overlay -->
-          <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
-            <div class="max-w-4xl">
-              <div class="flex items-center space-x-3 mb-4">
-                <Badge v-if="projectData.is_featured" variant="secondary" class="bg-yellow-500/90 text-white">
-                  <Star class="h-3 w-3 mr-1" />
-                  Featured
-                </Badge>
-                <Badge :class="statusConfig.color" variant="secondary">
-                  <component :is="statusConfig.icon" class="h-3 w-3 mr-1" />
-                  {{ projectData.status?.replace('_', ' ') }}
-                </Badge>
-              </div>
-
-              <h1 class="text-3xl lg:text-5xl font-bold text-white mb-4 max-w-2xl">
-                {{ projectData.name }}
-              </h1>
-
-              <p
-                v-if="projectData.short_description"
-                class="text-lg lg:text-xl text-white/90 max-w-2xl font-mono">
-                {{ projectData.short_description }}
-              </p>
-
-              <!-- External Links -->
-              <div v-if="externalLinks.length > 0" class="flex flex-wrap gap-3 mt-6">
-                <Button
-                  v-for="link in externalLinks"
-                  :key="link.name"
-                  :variant="link.variant"
-                  size="lg"
-                  asChild
-                  class="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
-                >
-                  <a :href="link.url" target="_blank" rel="noopener noreferrer">
-                    <span>{{ link.name }}</span>
-                    <component :is="link.icon" class="size-5" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Main Content -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- Main Content -->
-        <div ref="contentRef" class="lg:col-span-2 space-y-6">
-
-          <!-- Project Description -->
-          <Card v-if="projectData.description">
-            <CardHeader>
-              <CardTitle class="flex items-center sub-caption">
-                <Target class="h-5 w-5 mr-2" />
-                About This Project
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <div
-                class="prose dark:prose-invert max-w-none"
-                v-html="projectData.description">
-              </div>
-            </CardContent>
-          </Card>
-
-          <!-- Technologies -->
-          <Card v-if="projectData.technologies && projectData.technologies.length > 0" ref="techStackRef">
-            <CardHeader>
-              <CardTitle class="flex items-center sub-caption">
-                <Code class="h-5 w-5 mr-2" />
-                Technologies Used
-              </CardTitle>
-              <CardDescription>Technical stack and tools used in this project</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div class="flex flex-wrap gap-2">
-                <Badge
-                  v-for="tech in projectData.technologies"
-                  :key="tech"
-                  variant="secondary"
-                  class="tech-badge bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                >
-                  {{ tech }}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <!-- Features -->
-          <Card v-if="projectData.features && projectData.features.length > 0" ref="featuresRef">
-            <CardHeader>
-              <CardTitle class="flex items-center sub-caption">
-                <Award class="h-5 w-5 mr-2" />
-                Key Features
-              </CardTitle>
-              <CardDescription>Highlight important project features and capabilities</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul class="space-y-3">
-                <li
-                  v-for="feature in projectData.features"
-                  :key="feature"
-                  class="feature-item flex items-center"
-                >
-                  <CheckCircle2 class="h-4 w-4 mr-3 text-green-600 shrink-0" />
-                  <span>{{ feature }}</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <!-- Project Journey -->
-          <Card v-if="projectData.challenges || projectData.solutions || projectData.results">
-            <CardHeader>
-              <CardTitle class="flex items-center sub-caption">
-                <Zap class="h-5 w-5 mr-2" />
-                Project Journey
-              </CardTitle>
-              <CardDescription>
-                Challenges faced, solutions implemented, and results achieved
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              <div class="grid grid-cols-1 gap-6">
-                <div v-if="projectData.challenges">
-                  <h4 class="font-medium mb-2 flex items-center sub-caption">
-                    <AlertCircle class="h-4 w-4 mr-2 text-red-600" />
-                    Challenges
-                  </h4>
-                  <p class="text-muted-foreground text-sm">{{ projectData.challenges }}</p>
-                </div>
-
-                <Separator v-if="projectData.solutions" />
-
-                <div v-if="projectData.solutions">
-                  <h4 class="font-medium mb-2 flex items-center sub-caption">
-                    <Target class="h-4 w-4 mr-2 text-blue-600" />
-                    Solutions
-                  </h4>
-                  <p class="text-muted-foreground text-sm">{{ projectData.solutions }}</p>
-                </div>
-
-                <Separator v-if="projectData.results" />
-
-                <div v-if="projectData.results">
-                  <h4 class="font-medium mb-2 flex items-center sub-caption">
-                    <CheckCircle2 class="h-4 w-4 mr-2 text-green-600" />
-                    Results
-                  </h4>
-                  <p class="text-muted-foreground text-sm">{{ projectData.results }}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <!-- Client Feedback -->
-          <Card v-if="projectData.client_feedback">
-            <CardHeader>
-              <CardTitle class="flex items-center sub-caption">
-                <Heart class="h-5 w-5 mr-2" />
-                Client Feedback
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <blockquote class="border-l-4 border-primary pl-4 italic text-lg">
-                "{{ projectData.client_feedback }}"
-              </blockquote>
-            </CardContent>
-          </Card>
-        </div>
-
-        <!-- Sidebar -->
-        <section>
-          <div class="space-y-6 sticky top-20">
-            <!-- Project Details -->
-            <Card>
-              <CardContent class="space-y-4">
-                <!-- Client -->
-                <div v-if="projectData.customer">
-                  <CardTitle class="text-muted-foreground font-thin">
-                    Project for
-                  </CardTitle>
-
-                  <div class="font-medium">{{ customerName }}</div>
-                  <div class="text-sm text-muted-foreground">
-                    {{ projectData.customer.full_name }}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <!-- Year -->
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <Calendar class="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span class="text-sm text-muted-foreground">Year</span>
-                  </div>
-                  <span class="text-sm font-medium font-mono">{{ projectYear }}</span>
-                </div>
-
-                <Separator v-if="projectData.category" />
-
-                <!-- Category -->
-                <div v-if="projectData.category" class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <Tag class="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span class="text-sm text-muted-foreground">Category</span>
-                  </div>
-
-                  <span class="text-sm font-medium font-mono">
-                    {{ projectData.category }}
-                  </span>
-                </div>
-
-                <Separator v-if="projectData.production_type" />
-
-                <!-- Production Type -->
-                <div v-if="projectData.production_type" class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <Layers class="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span class="text-sm text-muted-foreground">Type</span>
-                  </div>
-
-                  <span class="text-sm font-medium font-mono">
-                    {{ projectData.production_type }}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <!-- Share Project -->
-            <Card>
-              <CardHeader>
-                <CardTitle class="flex items-center">
-                  <Share2 class="h-5 w-5 mr-2" />
-                  Share Project
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent>
-                <Button
-                  variant="outline"
-                  size="sm" class="w-full"
-                  @click="shareProject">
-                  <Share2 class="h-4 w-4 mr-2" />
-                  Share This Project
-                </Button>
-              </CardContent>
-            </Card>
-
-          </div>
-        </section>
-      </div>
-
-      <!-- Project Gallery -->
-      <section v-if="galleryImages.length > 0" ref="galleryRef" class="mt-20">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold mb-4 font-mono">Project Gallery</h2>
-          <p class="text-muted-foreground max-w-2xl mx-auto">
-            Explore the visual journey of this project through detailed screenshots and design iterations.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            v-for="(image, index) in galleryImages"
-            :key="image.id"
-            class="gallery-item group cursor-pointer"
-            @click="openImageModal(index)">
-            <div class="relative aspect-video bg-muted rounded-lg overflow-hidden">
-              <img
-                :src="image.url"
-                :alt="image.name || `Project image ${index + 1}`"
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="sm" variant="secondary">
-                    <Maximize2 class="h-4 w-4 mr-2" />
-                    View Full Size
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Related Projects -->
-      <section v-if="relatedProjectsData.length > 0" class="mt-20">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold mb-4 font-mono">Related Projects</h2>
-          <p class="text-muted-foreground max-w-2xl mx-auto">
-            Discover more projects from my portfolio that showcase similar skills and technologies.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card
-            v-for="relatedProject in relatedProjectsData"
-            :key="relatedProject.uuid"
-            class="group cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            asChild
-          >
-            <Link :href="projectsShow(relatedProject.uuid).url">
-              <div class="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                <img
-                  :src="relatedProject.poster_url || '/assets/placeholder-project.jpg'"
-                  :alt="relatedProject.name"
-                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
-              <CardContent class="p-4">
-                <h3 class="font-semibold group-hover:text-primary transition-colors">
-                  {{ relatedProject.name }}
-                </h3>
-                <p v-if="relatedProject.production_type" class="text-sm text-muted-foreground mt-1">
-                  {{ relatedProject.production_type }}
-                </p>
-              </CardContent>
+    <div class="min-h-screen bg-background">
+        <!-- Fixed Navigation -->
+        <div class="fixed top-12 left-16 right-0 z-20 flex items-center justify-between p-4 lg:p-6 mix-blend-difference text-white">
+            <Link :href="projectsIndex().url" class="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
+                <ArrowLeft class="size-4 transition-transform group-hover:-translate-x-1" />
+                <span>Back</span>
             </Link>
-          </Card>
-        </div>
-      </section>
-    </div>
-
-    <!-- Image Modal -->
-    <Dialog v-model:open="isImageDialogOpen">
-      <DialogContent class="max-w-2xl p-0">
-        <div class="relative">
-          <img
-            v-if="galleryImages[selectedImageIndex]"
-            :src="galleryImages[selectedImageIndex].url"
-            :alt="galleryImages[selectedImageIndex].name || `Project image ${selectedImageIndex + 1}`"
-            class="w-full h-auto max-h-[80vh] object-contain"
-          />
-
-          <!-- Navigation -->
-          <div v-if="galleryImages.length > 1" class="absolute inset-y-0 left-0 flex items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              class="ml-2 bg-black/20 hover:bg-black/40 text-white"
-              @click="prevImage"
-            >
-              <ChevronLeft class="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div v-if="galleryImages.length > 1" class="absolute inset-y-0 right-0 flex items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              class="mr-2 bg-black/20 hover:bg-black/40 text-white"
-              @click="nextImage"
-            >
-              <ChevronRight class="h-4 w-4" />
-            </Button>
-          </div>
-
-          <!-- Image Info -->
-          <div class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-4">
-            <div class="text-white">
-              <h3 class="font-medium">{{ galleryImages[selectedImageIndex]?.name || `Image ${selectedImageIndex + 1}` }}</h3>
-              <p class="text-sm text-white/80">{{ selectedImageIndex + 1 }} of {{ galleryImages.length }}</p>
+            <div v-if="externalLinks.length > 0" class="hidden items-center gap-2 sm:flex">
+                <Link v-for="link in externalLinks" :key="link.name" :href="link.url" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
+                    <component :is="link.icon" class="size-4" />
+                    <span>{{ link.name }}</span>
+                </Link>
             </div>
-          </div>
         </div>
-      </DialogContent>
-    </Dialog>
-  </div>
+
+        <!-- ===================== 1. HERO - FULL SCREEN IMMERSIVE ===================== -->
+        <section ref="heroRef" class="relative h-[95vh] min-h-[600px] overflow-hidden">
+            <div class="absolute inset-0">
+                <img :src="heroImage" :alt="projectData.name" class="h-full w-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+            </div>
+
+            <div ref="heroContentRef" class="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-16">
+                <div class="mx-auto max-w-7xl">
+                    <div class="mb-6 flex flex-wrap items-center gap-3">
+                        <Badge variant="outline" class="border-white/30 bg-white/10 text-white backdrop-blur-sm font-sans text-xs uppercase tracking-wider">
+                            {{ projectData.category || 'Branding' }}
+                        </Badge>
+                        <Badge variant="outline" class="border-white/30 bg-white/10 text-white backdrop-blur-sm font-sans text-xs">
+                            {{ projectYear }}
+                        </Badge>
+                        <Badge v-if="projectData.is_featured" variant="outline" class="border-amber-500/30 bg-amber-500/10 text-amber-400 backdrop-blur-sm font-sans text-xs">
+                            <Sparkles class="mr-1 size-3" />
+                            Featured
+                        </Badge>
+                    </div>
+                    <h1 class="font-display text-5xl font-bold leading-[0.9] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
+                        {{ projectData.name }}
+                    </h1>
+                    <p v-if="projectData.short_description" class="mt-6 max-w-2xl font-sans text-lg leading-relaxed text-white/70 sm:text-xl lg:text-2xl">
+                        {{ projectData.short_description }}
+                    </p>
+                    <div v-if="externalLinks.length > 0" class="mt-8 flex flex-wrap gap-3 sm:hidden">
+                        <Link v-for="link in externalLinks" :key="link.name" :href="link.url" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+                            <component :is="link.icon" class="size-4" />
+                            <span>{{ link.name }}</span>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 2. CLIENT VISION & CONTEXT ===================== -->
+        <section ref="overviewRef" class="bg-background">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <!-- Quick Facts Grid -->
+                <div class="mb-16 grid grid-cols-2 gap-8 lg:grid-cols-4">
+                    <div>
+                        <p class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Client</p>
+                        <p class="mt-2 font-display text-lg font-semibold text-foreground lg:text-xl">{{ customerName }}</p>
+                    </div>
+                    <div>
+                        <p class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Category</p>
+                        <p class="mt-2 font-display text-lg font-semibold text-foreground lg:text-xl">{{ projectData.category || 'Branding' }}</p>
+                    </div>
+                    <div>
+                        <p class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Year</p>
+                        <p class="mt-2 font-display text-lg font-semibold text-foreground lg:text-xl">{{ projectYear }}</p>
+                    </div>
+                    <div>
+                        <p class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Status</p>
+                        <p class="mt-2 font-display text-lg font-semibold text-emerald-600 dark:text-emerald-400 lg:text-xl">Completed</p>
+                    </div>
+                </div>
+
+                <!-- Project Title & Description -->
+                <div v-if="projectData.description" class="mb-16">
+                    <h2 class="mb-8 font-display text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                        {{ projectData.name }}
+                    </h2>
+                    <div class="prose prose-lg max-w-none dark:prose-invert" v-html="projectData.description"></div>
+                </div>
+
+                <!-- Technologies Used -->
+                <div v-if="projectData.technologies?.length" class="flex flex-wrap items-center gap-3">
+                    <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Tools:</span>
+                    <Badge v-for="tech in projectData.technologies" :key="tech" variant="secondary" class="bg-secondary/50 px-4 py-2.5 font-sans text-sm">
+                        {{ tech }}
+                    </Badge>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 3. THE CHALLENGE ===================== -->
+        <section v-if="projectData.challenges" ref="briefRef" class="bg-secondary/30">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/5 px-4 py-2">
+                        <Target class="size-4 text-red-600 dark:text-red-400" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-red-600 dark:text-red-400">The Challenge</span>
+                    </div>
+                </div>
+                <h2 class="mb-8 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    What Problem Were We Solving?
+                </h2>
+                <p class="font-sans text-lg leading-relaxed text-muted-foreground lg:text-xl">
+                    {{ projectData.challenges }}
+                </p>
+            </div>
+        </section>
+
+        <!-- ===================== 6. RESULTS & IMPACT ===================== -->
+        <section v-if="projectMetrics.length > 0" ref="resultsRef" class="bg-primary text-primary-foreground">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
+                        <TrendingUp class="size-4" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em]">Results & Impact</span>
+                    </div>
+                </div>
+                <h2 class="mb-12 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+                    The Numbers Speak
+                </h2>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="(metric, index) in projectMetrics" :key="index" class="group rounded-3xl border border-white/20 bg-white/10 p-8 backdrop-blur-sm transition-all hover:bg-white/15">
+                        <p class="font-display text-5xl font-bold tracking-tight lg:text-6xl">{{ metric.value }}</p>
+                        <p class="mt-3 font-sans text-sm font-medium uppercase tracking-wider text-white/70">{{ metric.label }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 4. STRATEGY & APPROACH ===================== -->
+        <section v-if="projectData.process_steps?.length" ref="processRef" class="bg-background">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/5 px-4 py-2">
+                        <Layers class="size-4 text-blue-600 dark:text-blue-400" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Strategy & Approach</span>
+                    </div>
+                </div>
+                <h2 class="mb-8 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    How we tackled it
+                </h2>
+                <p class="mb-12 font-sans text-lg leading-relaxed text-muted-foreground lg:text-xl">
+                    A strategic, phased approach to ensure every decision was intentional and aligned with business objectives.
+                </p>
+
+                <div class="space-y-8">
+                    <div v-for="(step, index) in projectData.process_steps" :key="index" class="process-step flex gap-6">
+                        <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-lg font-bold text-primary">
+                            {{ String(index + 1).padStart(2, '0') }}
+                        </div>
+                        <div>
+                            <h3 class="mb-2 font-display text-xl font-bold text-foreground">{{ step.title }}</h3>
+                            <p class="font-sans text-base leading-relaxed text-muted-foreground">
+                                {{ step.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 5. THE SOLUTION ===================== -->
+        <section v-if="projectData.solutions || projectData.features?.length" ref="solutionRef" class="bg-secondary/30">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-2">
+                        <Zap class="size-4 text-emerald-600 dark:text-emerald-400" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">The Solution</span>
+                    </div>
+                </div>
+                <h2 class="mb-8 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    What We Delivered
+                </h2>
+                <div v-if="projectData.solutions" class="mb-12">
+                    <p class="font-sans text-lg leading-relaxed text-muted-foreground lg:text-xl">{{ projectData.solutions }}</p>
+                </div>
+                <div v-if="projectData.features?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div v-for="(feature, index) in projectData.features" :key="index" class="flex items-start gap-4 rounded-2xl border border-border/50 bg-background p-6 transition-all hover:border-primary/30 hover:shadow-sm">
+                        <CheckCircle2 class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                        <span class="font-sans text-base font-medium text-foreground">{{ feature }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 7. GALLERY - VISUAL SHOWCASE ===================== -->
+        <section v-if="galleryImages.length > 0" ref="galleryRef" class="bg-background">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 px-4 py-2">
+                        <Monitor class="size-4 text-primary" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-primary">Visual Showcase</span>
+                    </div>
+                </div>
+                <h2 class="mb-12 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    See It in Action
+                </h2>
+
+                <!-- Gallery Grid -->
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div v-for="(image, index) in galleryImages" :key="image.id" class="gallery-item cursor-pointer overflow-hidden rounded-3xl" @click="openImageModal(index)">
+                        <div class="relative aspect-[4/3]">
+                            <img :src="image.url" :alt="image.name" class="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]" loading="lazy" />
+                            <div class="absolute inset-0 bg-black/0 transition-colors hover:bg-black/10">
+                                <div class="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 text-xs text-white backdrop-blur-sm opacity-0 transition-opacity hover:bg-black/60">
+                                    <Maximize2 class="size-3.5" />
+                                    <span>View</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 8. CLIENT TESTIMONIAL ===================== -->
+        <section v-if="projectData.client_feedback" ref="testimonialRef" class="bg-secondary/30">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/5 px-4 py-2">
+                        <Heart class="size-4 text-red-500" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-red-600 dark:text-red-400">Client Feedback</span>
+                    </div>
+                </div>
+                <blockquote class="mb-10 font-heading text-3xl leading-tight text-foreground sm:text-4xl lg:text-5xl">
+                    "{{ projectData.client_feedback }}"
+                </blockquote>
+                <div class="flex items-center gap-4">
+                    <div class="size-14 rounded-full bg-primary/10" />
+                    <div>
+                        <p class="font-sans text-base font-semibold text-foreground">{{ customerName }}</p>
+                        <p class="font-sans text-sm text-muted-foreground">Client</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== 9. CTA SECTION ===================== -->
+        <section ref="ctaRef" class="bg-background">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <AnimatedCTAWithAvailability
+                    :messages="[
+                        'Ready for your transformation?',
+                        'Let\'s build your brand',
+                        'Start your project today',
+                        'Elevate your business',
+                    ]"
+                    cta-text="Get in Touch"
+                    cta-href="/contact"
+                    :switch-interval="3500"
+                />
+            </div>
+        </section>
+
+        <!-- ===================== 10. NEXT PROJECT ===================== -->
+        <section v-if="relatedProjectsData.length > 0" ref="nextProjectRef" class="bg-secondary/30">
+            <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
+                <div class="mb-12">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 px-4 py-2">
+                        <ArrowRight class="size-4 text-primary" />
+                        <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-primary">Continue Exploring</span>
+                    </div>
+                </div>
+                <h2 class="mb-12 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    Next Project
+                </h2>
+                <Link :href="projectsShow(relatedProjectsData[0].uuid).url" class="group block">
+                    <div class="relative aspect-[16/9] overflow-hidden rounded-3xl">
+                        <img :src="relatedProjectsData[0].poster_url || '/assets/placeholder-project.jpg'" :alt="relatedProjectsData[0].name" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                        <div class="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
+                            <Badge variant="outline" class="mb-3 border-white/30 bg-white/10 text-white backdrop-blur-sm font-sans text-xs">
+                                {{ relatedProjectsData[0].category || 'Branding' }}
+                            </Badge>
+                            <h3 class="font-display text-3xl font-bold leading-tight text-white lg:text-4xl">
+                                {{ relatedProjectsData[0].name }}
+                            </h3>
+                            <p v-if="relatedProjectsData[0].short_description" class="mt-3 max-w-2xl font-sans text-white/70 lg:text-lg">
+                                {{ relatedProjectsData[0].short_description }}
+                            </p>
+                            <div class="mt-6 flex items-center gap-2 text-white">
+                                <span class="font-sans text-sm font-medium">View Case Study</span>
+                                <ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+                            </div>
+                        </div>
+                    </div>
+                </Link>
+            </div>
+        </section>
+
+        <!-- ===================== IMAGE MODAL ===================== -->
+        <div v-if="isImageDialogOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95" @click="isImageDialogOpen = false">
+            <div class="relative h-full w-full" @click.stop>
+                <img v-if="galleryImages[selectedImageIndex]" :src="galleryImages[selectedImageIndex].url" :alt="galleryImages[selectedImageIndex].name" class="mx-auto h-full w-auto max-h-[90vh] object-contain" />
+                <div v-if="galleryImages.length > 1" class="absolute inset-y-0 left-6 flex items-center">
+                    <button class="flex size-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20" @click.stop="prevImage">
+                        <ChevronLeft class="size-6" />
+                    </button>
+                </div>
+                <div v-if="galleryImages.length > 1" class="absolute inset-y-0 right-6 flex items-center">
+                    <button class="flex size-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20" @click.stop="nextImage">
+                        <ChevronRight class="size-6" />
+                    </button>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                    <div class="flex items-center justify-between text-white">
+                        <h3 class="font-medium">{{ galleryImages[selectedImageIndex]?.name || `Image ${selectedImageIndex + 1}` }}</h3>
+                        <p class="text-sm text-white/80">{{ selectedImageIndex + 1 }} of {{ galleryImages.length }}</p>
+                    </div>
+                </div>
+                <button class="absolute right-6 top-6 flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20" @click="isImageDialogOpen = false">
+                    <X class="size-5" />
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  color: inherit;
-}
-
-.prose p {
-  margin-bottom: 1rem;
-}
-
-.prose ul, .prose ol {
-  margin-bottom: 1rem;
-}
-
-.prose li {
-  margin-bottom: 0.5rem;
-}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 { color: inherit; }
+.prose p { margin-bottom: 1.25rem; }
+.prose ul, .prose ol { margin-bottom: 1.25rem; }
+.prose li { margin-bottom: 0.5rem; }
 </style>

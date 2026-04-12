@@ -112,7 +112,8 @@ export interface Project {
     features?: string[];
     challenges?: string | null;
     solutions?: string | null;
-    results?: string | null;
+    process_steps?: Array<{ title: string; description: string }> | null;
+    results?: Array<{ metric: string; value: string }> | string | null;
     client_feedback?: string | null;
     is_featured: boolean;
     is_public?: boolean;

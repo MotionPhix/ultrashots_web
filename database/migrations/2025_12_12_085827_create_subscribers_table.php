@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('subscribers', function (Blueprint $table) {
             $table->id();
+            $table->string('email')->nullable()->unique();
+            $table->string('token', 64)->nullable();
+            $table->boolean('subscribed')->default(false);
+            $table->timestamp('confirmed_at')->nullable();
+            $table->timestamp('subscribed_at')->nullable();
+            $table->timestamp('unsubscribed_at')->nullable();
+            $table->json('meta')->nullable();
             $table->timestamps();
+
+            $table->index('token');
+            $table->index('subscribed');
         });
     }
 

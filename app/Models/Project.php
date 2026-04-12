@@ -43,6 +43,7 @@ class Project extends Model implements HasMedia
         'features',
         'challenges',
         'solutions',
+        'process_steps',
         'results',
         'client_feedback',
         'is_featured',
@@ -73,6 +74,7 @@ class Project extends Model implements HasMedia
             'budget' => 'decimal:2',
             'technologies' => 'array',
             'features' => 'array',
+            'process_steps' => 'array',
             'results' => 'array', // Store project results/metrics as array
             'is_featured' => 'boolean',
             'is_public' => 'boolean',

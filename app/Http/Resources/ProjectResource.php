@@ -40,6 +40,7 @@ class ProjectResource extends JsonResource
       'features' => $this->features,
       'challenges' => $this->challenges,
       'solutions' => $this->solutions,
+      'process_steps' => $this->process_steps,
       'results' => $this->results,
       'client_feedback' => $this->client_feedback,
       'is_featured' => $this->is_featured,

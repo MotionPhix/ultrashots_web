@@ -32,6 +32,7 @@ return new class extends Migration
             $table->json('features')->nullable();
             $table->text('challenges')->nullable();
             $table->text('solutions')->nullable();
+            $table->json('process_steps')->nullable();
             $table->text('results')->nullable();
             $table->text('client_feedback')->nullable();
             $table->boolean('is_featured')->default(false);
@@ -51,6 +52,11 @@ return new class extends Migration
             $table->index('is_featured');
             $table->index('is_public');
             $table->index('created_at');
+            $table->index(['is_public', 'status'], 'projects_public_status_index');
+            $table->index(['is_public', 'category'], 'projects_public_category_index');
+            $table->index(['is_public', 'production_type'], 'projects_public_production_type_index');
+            $table->index(['customer_id', 'status'], 'projects_customer_status_index');
+            $table->index(['status', 'priority'], 'projects_status_priority_index');
         });
     }
 
