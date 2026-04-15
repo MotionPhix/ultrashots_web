@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { create, destroy, download as downloadAsset, duplicate, edit, index, show } from '@/routes/admin/downloads';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, setLayoutProps, useForm } from '@inertiajs/vue3';
+
+setLayoutProps({
+    breadcrumbs: [{ title: 'Downloads', href: index.url() }],
+});
 
 interface DownloadRow {
     id: number;

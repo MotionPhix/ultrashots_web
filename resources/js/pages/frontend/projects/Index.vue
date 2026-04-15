@@ -4,16 +4,16 @@ import { index as projectIndexRoute, show as projectShow } from '@/routes/projec
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 // Project type is globally available from types/index.d.ts
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 import AnimatedCTAWithAvailability from '@/components/frontend/ui/AnimatedCTAWithAvailability.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Project } from '@/types';
 import { useStorage } from '@vueuse/core';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, ArrowUpRight, Building2, ExternalLink, Filter, Github, Search, Sparkles, X } from 'lucide-vue-next';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -476,52 +476,68 @@ defineOptions({ layout: AppLayout });
 
                     <!-- Filter Controls -->
                     <div :class="['grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4', showFilters ? 'block' : 'hidden lg:grid']">
-                        <div class="relative">
-                            <select
-                                v-model="selectedCategory"
-                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="all">All Categories</option>
-                                <option v-for="category in categories" :key="category" :value="category">
-                                    {{ category }}
-                                </option>
-                            </select>
+                        <div>
+                            <Select
+                                v-model="selectedCategory">
+                              <SelectTrigger class="w-full">
+                                <SelectValue placeholder="Select a category" />
+                              </SelectTrigger>
+
+                              <SelectContent>
+                                  <SelectItem value="all">All Categories</SelectItem>
+                                  <SelectItem v-for="category in categories" :key="category" :value="category">
+                                      {{ category }}
+                                  </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
-                        <div class="relative">
-                            <select
-                                v-model="selectedStatus"
-                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="all">All Status</option>
-                                <option v-for="status in statuses" :key="status" :value="status">
-                                    {{ getStatusConfig(status).label }}
-                                </option>
-                            </select>
+                        <div>
+                            <Select
+                                v-model="selectedStatus">
+                                <SelectTrigger class="w-full">
+                                  <SelectValue placeholder="Select a status" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                  <SelectItem value="all">All Status</SelectItem>
+                                  <SelectItem v-for="status in statuses" :key="status" :value="status">
+                                      {{ getStatusConfig(status).label }}
+                                  </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
-                        <div class="relative">
-                            <select
-                                v-model="selectedYear"
-                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="all">All Years</option>
-                                <option v-for="year in sortedYears" :key="year" :value="year.toString()">
-                                    {{ year }}
-                                </option>
-                            </select>
+                        <div>
+                            <Select
+                                v-model="selectedYear">
+                                <SelectTrigger class="w-full">
+                                  <SelectValue placeholder="Select Year" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                  <SelectItem value="all">All Years</SelectItem>
+                                  <SelectItem v-for="year in sortedYears" :key="year" :value="year.toString()">
+                                      {{ year }}
+                                  </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
-                        <div class="relative">
-                            <select
-                                v-model="sortBy"
-                                class="h-12 w-full rounded-md border border-input bg-background px-4 py-2 font-sans text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="name">Name A-Z</option>
-                                <option value="featured">Featured First</option>
-                            </select>
+                        <div>
+                            <Select
+                                v-model="sortBy">
+                                <SelectTrigger class="w-full">
+                                  <SelectValue placeholder="Select Sort By" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                  <SelectItem value="newest">Newest First</SelectItem>
+                                  <SelectItem value="oldest">Oldest First</SelectItem>
+                                  <SelectItem value="name">Name A-Z</SelectItem>
+                                  <SelectItem value="featured">Featured First</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
@@ -779,7 +795,7 @@ defineOptions({ layout: AppLayout });
                         'Start Something Amazing',
                     ]"
                     cta-text="Get in Touch"
-                    cta-href="/contact"
+                    cta-href="/get-in-touch"
                     :switch-interval="3500"
                 />
             </div>

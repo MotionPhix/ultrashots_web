@@ -148,7 +148,7 @@ class LandingPageContentService
                     'investment' => 'Custom quote',
                     'services' => ['Brand Strategy', 'UI Design', 'Web Development'],
                     'technologies' => $project->main_technologies ?? ['Figma', 'Vue', 'Laravel'],
-                    'metrics' => $this->extractMetrics($project->results ?? []),
+                    'metrics' => $this->extractMetrics($project->results),
                     'poster_url' => $project->poster_url,
                     'image_set' => [
                         'poster' => $project->poster_url,
@@ -241,7 +241,7 @@ class LandingPageContentService
         );
 
         // Extract first metric if available
-        $metrics = $this->extractMetrics($project->results ?? []);
+        $metrics = $this->extractMetrics($project->results);
         $primaryMetric = $metrics[0] ?? null;
 
         return [
@@ -258,29 +258,37 @@ class LandingPageContentService
     }
 
     /**
-     * Extract metrics from project results
+     * Extract metrics from project results HTML string.
      *
-     * @param  array<string, mixed>  $results
+     * Parses patterns like: <h2>+47%</h2><p>Donor engagement rate</p>
+     *
      * @return array<int, array<string, string>>
      */
-    private function extractMetrics(array $results): array
+    private function extractMetrics(?string $results): array
     {
-        if (empty($results)) {
+        if (blank($results)) {
             return [
                 ['label' => 'Engagement lift', 'value' => '+40%'],
                 ['label' => 'Conversion rate', 'value' => '+25%'],
             ];
         }
 
-        // Transform project results into metric format
-        return collect($results)
+        preg_match_all('/<h[1-3][^>]*>(.*?)<\/h[1-3]>\s*<p[^>]*>(.*?)<\/p>/is', $results, $matches);
+
+        if (empty($matches[1])) {
+            return [
+                ['label' => 'Engagement lift', 'value' => '+40%'],
+                ['label' => 'Conversion rate', 'value' => '+25%'],
+            ];
+        }
+
+        return collect($matches[1])
             ->take(3)
-            ->map(function ($result) {
-                return [
-                    'label' => $result['metric'] ?? 'Improvement',
-                    'value' => $result['value'] ?? '+30%',
-                ];
-            })
+            ->map(fn (string $value, int $i) => [
+                'value' => strip_tags($value),
+                'label' => strip_tags($matches[2][$i] ?? 'Improvement'),
+            ])
+            ->values()
             ->all();
     }
 
@@ -319,7 +327,7 @@ class LandingPageContentService
 
         return [
             'title' => "{$ownerName} | Brand Strategist & UI Architect in Malawi",
-            'description' => "Premium branding, UI systems, and conversion-focused design for ambitious businesses in Lilongwe and beyond. Transform your brand from invisible to irresistible.",
+            'description' => 'Premium branding, UI systems, and conversion-focused design for ambitious businesses in Lilongwe and beyond. Transform your brand from invisible to irresistible.',
             'keywords' => [
                 'branding strategist Malawi',
                 'graphic design Lilongwe',

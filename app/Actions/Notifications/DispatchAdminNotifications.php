@@ -17,8 +17,7 @@ class DispatchAdminNotifications
     {
         $admins = User::query()
             ->whereHas('roles', function ($query): void {
-                $query->where('name', 'admin')
-                    ->where('guard_name', 'web');
+                $query->where('name', 'admin');
             })
             ->get();
 

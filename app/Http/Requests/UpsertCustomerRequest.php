@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CustomerStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -42,7 +43,7 @@ class UpsertCustomerRequest extends FormRequest
             'state' => ['nullable', 'string', 'max:255'],
             'zip_code' => ['nullable', 'string', 'max:50'],
             'country' => ['nullable', 'string', 'max:255'],
-            'status' => ['required', Rule::in(['active', 'inactive', 'pending'])],
+            'status' => ['required', Rule::enum(CustomerStatus::class)],
             'notes' => ['nullable', 'string'],
         ];
     }

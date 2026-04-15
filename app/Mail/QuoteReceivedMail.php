@@ -25,10 +25,16 @@ class QuoteReceivedMail extends Mailable implements ShouldQueue
 
     public function content(): Content
     {
+        $logoPath = public_path('ultrashots_logo.png');
+        if (! file_exists($logoPath)) {
+            $logoPath = public_path('images/logo.png');
+        }
+
         return new Content(
             view: 'emails.quote-received',
             with: [
                 'quote' => $this->quote,
+                'logo' => $logoPath,
             ],
         );
     }

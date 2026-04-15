@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('zip_code')->nullable();
             $table->string('country')->nullable();
-            $table->enum('status', ['active', 'inactive', 'pending'])->default('active');
+            $table->string('status')->default('active');
             $table->text('notes')->nullable();
             $table->timestamps();
 

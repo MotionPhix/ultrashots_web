@@ -4,6 +4,7 @@ import type { Component } from 'vue';
 
 export interface Auth {
     user: User | null;
+    is_admin: boolean;
 }
 
 export interface FlashMessages {
@@ -39,6 +40,7 @@ export type AppPageProps<
 export interface User {
     id: number;
     name?: string;
+    full_name?: string;
     first_name?: string;
     last_name?: string;
     job_title?: string;

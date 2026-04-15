@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('goals')->nullable();
             $table->string('target_audience')->nullable();
             $table->text('additional_info')->nullable();
-            $table->enum('status', ['pending', 'reviewed', 'sent', 'accepted', 'rejected'])->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

@@ -1,8 +1,16 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
+import { TipTapEditor } from '@/components/editor';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import AdminLayout from '@/layouts/AdminLayout.vue';
 import { index as customerIndex } from '@/routes/admin/customers';
 import { create as createRoute, index, store, update } from '@/routes/admin/projects';
-import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, setLayoutProps, useForm } from '@inertiajs/vue3';
 
 interface ProjectFormRecord {
     uuid?: string;
@@ -22,7 +30,7 @@ interface ProjectFormRecord {
     features?: string[];
     challenges?: string | null;
     solutions?: string | null;
-    results?: string | null;
+    results?: string | string[] | null;
     client_feedback?: string | null;
     is_featured?: boolean;
     is_public?: boolean;
@@ -53,8 +61,14 @@ const props = defineProps<{
     priorities: string[];
 }>();
 
+const normalizeResults = (r: ProjectFormRecord['results']): string => {
+    if (!r) { return ''; }
+    if (Array.isArray(r)) { return r.join('\n'); }
+    return String(r);
+};
+
 const form = useForm({
-    customer_id: props.project?.customer?.uuid ?? props.selected_customer_uuid ?? '',
+    customer_id: props.project?.customer?.uuid ?? props.selected_customer_uuid ?? null,
     name: props.project?.name ?? '',
     description: props.project?.description ?? '',
     short_description: props.project?.short_description ?? '',
@@ -71,7 +85,7 @@ const form = useForm({
     features: props.project?.features?.join(', ') ?? '',
     challenges: props.project?.challenges ?? '',
     solutions: props.project?.solutions ?? '',
-    results: props.project?.results ?? '',
+    results: normalizeResults(props.project?.results),
     client_feedback: props.project?.client_feedback ?? '',
     is_featured: props.project?.is_featured ?? false,
     is_public: props.project?.is_public ?? true,
@@ -87,32 +101,33 @@ const form = useForm({
 
 const submit = () => {
     if (props.project?.uuid) {
-        form.put(update.url(props.project.uuid), {
-            preserveScroll: true,
-        });
-
+        form.put(update.url(props.project.uuid), { preserveScroll: true });
         return;
     }
-
-    form.post(store.url(), {
-        preserveScroll: true,
-    });
+    form.post(store.url(), { preserveScroll: true });
 };
+
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Projects', href: index.url() },
+        { title: props.project ? 'Edit Project' : 'New Project', href: '' },
+    ],
+});
 
 defineOptions({ layout: AdminLayout });
 </script>
 
 <template>
-    <Head :title="project ? 'Edit Project' : 'New Project'" />
+    <Head :title="props.project ? 'Edit Project' : 'New Project'" />
 
     <div class="flex flex-col gap-6 p-4">
+        <!-- Page header -->
         <section class="rounded-3xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border">
             <div class="flex items-center justify-between gap-4">
                 <div>
                     <p class="text-sm uppercase tracking-[0.3em] text-muted-foreground">Admin</p>
                     <h1 class="mt-2 text-3xl font-semibold">{{ project ? 'Edit project' : 'Create project' }}</h1>
                 </div>
-
                 <div class="flex gap-3">
                     <Link :href="index.url()" class="rounded-full border border-input px-4 py-2 text-sm font-medium">All projects</Link>
                     <Link :href="customerIndex.url()" class="rounded-full border border-input px-4 py-2 text-sm font-medium">Customers</Link>
@@ -120,146 +135,294 @@ defineOptions({ layout: AdminLayout });
             </div>
         </section>
 
-        <form class="grid gap-6" @submit.prevent="submit">
-            <section class="grid gap-6 rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border lg:grid-cols-2">
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Customer</span>
-                    <select v-model="form.customer_id" class="rounded-2xl border border-input bg-background px-4 py-2.5">
-                        <option value="">No customer</option>
-                        <option v-for="customer in customers" :key="customer.value" :value="customer.value">
-                            {{ customer.label }}{{ customer.company ? ` · ${customer.company}` : '' }}
-                        </option>
-                    </select>
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Project name</span>
-                    <input v-model="form.name" type="text" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                    <span v-if="form.errors.name" class="text-xs text-red-600">{{ form.errors.name }}</span>
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Description</span>
-                    <textarea v-model="form.description" rows="5" class="rounded-2xl border border-input bg-background px-4 py-2.5" />
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Short description</span>
-                    <textarea v-model="form.short_description" rows="2" class="rounded-2xl border border-input bg-background px-4 py-2.5" />
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Production type</span>
-                    <input v-model="form.production_type" type="text" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Category</span>
-                    <input v-model="form.category" type="text" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Status</span>
-                    <select v-model="form.status" class="rounded-2xl border border-input bg-background px-4 py-2.5">
-                        <option v-for="status in statuses" :key="status" :value="status">{{ status.replace('_', ' ') }}</option>
-                    </select>
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Priority</span>
-                    <select v-model="form.priority" class="rounded-2xl border border-input bg-background px-4 py-2.5">
-                        <option v-for="priority in priorities" :key="priority" :value="priority">{{ priority }}</option>
-                    </select>
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Start date</span>
-                    <input v-model="form.start_date" type="datetime-local" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">End date</span>
-                    <input v-model="form.end_date" type="datetime-local" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Estimated hours</span>
-                    <input v-model="form.estimated_hours" type="number" min="0" step="0.01" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Actual hours</span>
-                    <input v-model="form.actual_hours" type="number" min="0" step="0.01" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Budget</span>
-                    <input v-model="form.budget" type="number" min="0" step="0.01" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Sort order</span>
-                    <input v-model="form.sort_order" type="number" min="0" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Technologies</span>
-                    <input v-model="form.technologies" type="text" placeholder="Laravel, Vue, Tailwind" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Features</span>
-                    <input v-model="form.features" type="text" placeholder="Dashboards, CMS, Reporting" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Challenges</span>
-                    <textarea v-model="form.challenges" rows="3" class="rounded-2xl border border-input bg-background px-4 py-2.5" />
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Solutions</span>
-                    <textarea v-model="form.solutions" rows="3" class="rounded-2xl border border-input bg-background px-4 py-2.5" />
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Results</span>
-                    <textarea v-model="form.results" rows="3" class="rounded-2xl border border-input bg-background px-4 py-2.5" />
-                </label>
-                <label class="grid gap-2 text-sm lg:col-span-2">
-                    <span class="font-medium">Client feedback</span>
-                    <textarea v-model="form.client_feedback" rows="3" class="rounded-2xl border border-input bg-background px-4 py-2.5" />
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Meta title</span>
-                    <input v-model="form.meta_title" type="text" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Meta description</span>
-                    <input v-model="form.meta_description" type="text" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Live URL</span>
-                    <input v-model="form.live_url" type="url" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">GitHub URL</span>
-                    <input v-model="form.github_url" type="url" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Figma URL</span>
-                    <input v-model="form.figma_url" type="url" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Behance URL</span>
-                    <input v-model="form.behance_url" type="url" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <label class="grid gap-2 text-sm">
-                    <span class="font-medium">Dribbble URL</span>
-                    <input v-model="form.dribbble_url" type="url" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
-                </label>
-                <div class="grid gap-3 text-sm lg:col-span-2 lg:grid-cols-2">
-                    <label class="flex items-center gap-3 rounded-2xl border border-input px-4 py-3">
-                        <input v-model="form.is_featured" type="checkbox" class="size-4">
-                        <span class="font-medium">Featured project</span>
+        <form class="flex flex-col gap-6" @submit.prevent="submit">
+
+            <!-- Project details -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Project details</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="customer_id">Customer</Label>
+                        <Select v-model="form.customer_id">
+                            <SelectTrigger id="customer_id" class="w-full">
+                                <SelectValue placeholder="No customer" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem :value="null">No customer</SelectItem>
+                                <SelectItem v-for="customer in customers" :key="customer.value" :value="customer.value">
+                                    {{ customer.label }}{{ customer.company ? ` Â· ${customer.company}` : '' }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="name">Project name</Label>
+                        <Input id="name" v-model="form.name" type="text" placeholder="e.g. Malawi NGO Coalition" />
+                        <p v-if="form.errors.name" class="text-xs text-destructive">{{ form.errors.name }}</p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="production_type">Production type</Label>
+                        <Input id="production_type" v-model="form.production_type" type="text" placeholder="e.g. Branding & Digital Strategy" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="category">Category</Label>
+                        <Input id="category" v-model="form.category" type="text" placeholder="e.g. NGO Campaign" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="status">Status</Label>
+                        <Select v-model="form.status">
+                            <SelectTrigger id="status" class="w-full">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="status in statuses" :key="status" :value="status">
+                                    {{ status.replace(/_/g, ' ') }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="priority">Priority</Label>
+                        <Select v-model="form.priority">
+                            <SelectTrigger id="priority" class="w-full">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="priority in priorities" :key="priority" :value="priority">
+                                    {{ priority }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="sort_order">Sort order</Label>
+                        <Input id="sort_order" v-model="form.sort_order" type="number" min="0" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dates & Metrics -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Dates &amp; Metrics</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="start_date">Start date</Label>
+                        <Input id="start_date" v-model="form.start_date" type="datetime-local" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="end_date">End date</Label>
+                        <Input id="end_date" v-model="form.end_date" type="datetime-local" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="estimated_hours">Estimated hours</Label>
+                        <Input id="estimated_hours" v-model="form.estimated_hours" type="number" min="0" step="0.01" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="actual_hours">Actual hours</Label>
+                        <Input id="actual_hours" v-model="form.actual_hours" type="number" min="0" step="0.01" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="budget">Budget</Label>
+                        <Input id="budget" v-model="form.budget" type="number" min="0" step="0.01" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Content</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-6">
+                    <div class="grid gap-2">
+                        <Label>Description</Label>
+                        <TipTapEditor
+                            v-model="form.description"
+                            placeholder="Full project description..."
+                            min-height="200px"
+                        />
+                        <p v-if="form.errors.description" class="text-xs text-destructive">{{ form.errors.description }}</p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="short_description">Short description</Label>
+                        <Textarea
+                            id="short_description"
+                            v-model="form.short_description"
+                            rows="3"
+                            placeholder="One-line summary shown in project cards..."
+                        />
+                        <p v-if="form.errors.short_description" class="text-xs text-destructive">{{ form.errors.short_description }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tags & Technologies -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Tags &amp; Technologies</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-6">
+                    <div class="grid gap-2">
+                        <Label for="technologies">Technologies</Label>
+                        <Input id="technologies" v-model="form.technologies" type="text" placeholder="Figma, Adobe Creative Suite, Meta Ads Manager" />
+                        <p class="text-xs text-muted-foreground">Comma-separated list</p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="features">Features</Label>
+                        <Input id="features" v-model="form.features" type="text" placeholder="Brand identity system, Social media strategy, Impact reporting" />
+                        <p class="text-xs text-muted-foreground">Comma-separated list</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Case Study -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Case Study</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-8">
+                    <div class="grid gap-2">
+                        <Label>Challenges</Label>
+                        <TipTapEditor
+                            v-model="form.challenges"
+                            placeholder="What challenges did the client face?"
+                            min-height="150px"
+                        />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label>Solutions</Label>
+                        <TipTapEditor
+                            v-model="form.solutions"
+                            placeholder="How did you solve them?"
+                            min-height="150px"
+                        />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label>Results</Label>
+                        <TipTapEditor
+                            v-model="form.results"
+                            placeholder="What were the outcomes and measurable results?"
+                            min-height="150px"
+                        />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label>Client feedback</Label>
+                        <TipTapEditor
+                            v-model="form.client_feedback"
+                            placeholder="What did the client say?"
+                            min-height="120px"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEO -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">SEO</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="meta_title">Meta title</Label>
+                        <Input id="meta_title" v-model="form.meta_title" type="text" placeholder="Page title for search engines" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="meta_description">Meta description</Label>
+                        <Input id="meta_description" v-model="form.meta_description" type="text" placeholder="Short description for search results" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Links -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Links</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-6 lg:grid-cols-2">
+                    <div class="grid gap-2">
+                        <Label for="live_url">Live URL</Label>
+                        <Input id="live_url" v-model="form.live_url" type="url" placeholder="https://example.com" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="github_url">GitHub URL</Label>
+                        <Input id="github_url" v-model="form.github_url" type="url" placeholder="https://github.com/..." />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="figma_url">Figma URL</Label>
+                        <Input id="figma_url" v-model="form.figma_url" type="url" placeholder="https://figma.com/..." />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="behance_url">Behance URL</Label>
+                        <Input id="behance_url" v-model="form.behance_url" type="url" placeholder="https://behance.net/..." />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="dribbble_url">Dribbble URL</Label>
+                        <Input id="dribbble_url" v-model="form.dribbble_url" type="url" placeholder="https://dribbble.com/..." />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visibility -->
+            <section class="rounded-3xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border">
+                <h2 class="text-base font-semibold">Visibility</h2>
+                <Separator class="my-4" />
+                <div class="grid gap-4 lg:grid-cols-2">
+                    <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-input px-4 py-3">
+                        <Checkbox
+                            id="is_featured"
+                            :checked="form.is_featured"
+                            @update:checked="(v) => (form.is_featured = !!v)"
+                        />
+                        <div class="grid gap-0.5">
+                            <span class="text-sm font-medium">Featured project</span>
+                            <span class="text-xs text-muted-foreground">Show in featured section on the public site</span>
+                        </div>
                     </label>
-                    <label class="flex items-center gap-3 rounded-2xl border border-input px-4 py-3">
-                        <input v-model="form.is_public" type="checkbox" class="size-4">
-                        <span class="font-medium">Visible on public site</span>
+
+                    <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-input px-4 py-3">
+                        <Checkbox
+                            id="is_public"
+                            :checked="form.is_public"
+                            @update:checked="(v) => (form.is_public = !!v)"
+                        />
+                        <div class="grid gap-0.5">
+                            <span class="text-sm font-medium">Visible on public site</span>
+                            <span class="text-xs text-muted-foreground">Publish this project to the portfolio</span>
+                        </div>
                     </label>
                 </div>
             </section>
 
+            <!-- Actions -->
             <div class="flex justify-end gap-3">
-                <Link :href="props.project?.uuid ? createRoute.url() : index.url()" class="rounded-full border border-input px-4 py-2.5 text-sm font-medium">
+                <Link
+                    :as="Button"
+                    variant="outline"
+                    :href="props.project?.uuid ? createRoute.url() : index.url()">
                     {{ project ? 'Create new instead' : 'Cancel' }}
                 </Link>
-                <button type="submit" :disabled="form.processing" class="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-60">
+                <Button type="submit" :disabled="form.processing">
                     {{ form.processing ? 'Saving...' : project ? 'Save project' : 'Create project' }}
-                </button>
+                </Button>
             </div>
+
         </form>
     </div>
 </template>

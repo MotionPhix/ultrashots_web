@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CustomerStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -42,6 +43,7 @@ class Customer extends Model
     protected function casts(): array
     {
         return [
+            'status' => CustomerStatus::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];

@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Ai\Agents\BrandConsultant;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Ai\Enums\Lab;
+use Throwable;
 
 class ChatController extends Controller
 {
@@ -25,31 +24,29 @@ class ChatController extends Controller
         ]);
 
         $conversationId = $request->input('conversation_id');
-        $isNewConversation = false;
 
-        if (! $conversationId) {
-            $conversationId = Str::uuid()->toString();
-            $isNewConversation = true;
+        // Use a guest object for unauthenticated conversations (user_id nullable in DB)
+        $guest = new class
+        {
+            public ?int $id = null;
+        };
+
+        $agent = $conversationId
+            ? (new BrandConsultant)->continue($conversationId, as: $guest)
+            : (new BrandConsultant)->forUser($guest);
+
+        try {
+            $response = $agent->prompt(
+                $request->message,
+                provider: Lab::Gemini,
+                model: 'gemini-2.5-flash',
+            );
+        } catch (Throwable) {
+            return response()->json([
+                'error' => true,
+                'message' => "I'm having trouble connecting right now. Please try again in a moment.",
+            ], 503);
         }
-
-        // Create conversation if it doesn't exist
-        if ($isNewConversation) {
-            DB::table('agent_conversations')->insert([
-                'id' => $conversationId,
-                'title' => 'New Brand Consultation',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        // Create agent and prompt it with conversation history
-        $agent = new BrandConsultant($conversationId);
-
-        $response = $agent->prompt(
-            $request->message,
-            provider: Lab::Gemini,
-            model: 'gemini-2.5-flash',
-        );
 
         // Parse the structured response
         $structuredResponse = json_decode((string) $response, true);
@@ -59,7 +56,7 @@ class ChatController extends Controller
 
         return response()->json([
             'message' => $assistantMessage,
-            'conversation_id' => $conversationId,
+            'conversation_id' => $response->conversationId,
             'tool_used' => $toolUsed,
             'booking_scheduled' => $bookingScheduled,
         ]);

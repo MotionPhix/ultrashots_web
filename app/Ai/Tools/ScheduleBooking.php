@@ -2,6 +2,8 @@
 
 namespace App\Ai\Tools;
 
+use App\Events\QuoteRequested;
+use App\Models\Quote;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -31,11 +33,11 @@ class ScheduleBooking implements Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'client_name' => $schema->string(),
-            'client_email' => $schema->string(),
+            'client_name' => $schema->string()->required(),
+            'client_email' => $schema->string()->required(),
+            'project_type' => $schema->string()->required(),
             'preferred_date' => $schema->string(),
             'preferred_time' => $schema->string(),
-            'project_type' => $schema->string(),
         ];
     }
 
@@ -44,23 +46,26 @@ class ScheduleBooking implements Tool
      */
     public function handle(Request $request): Stringable|string
     {
-        $parameters = $request->all();
+        $preferredDate = $request->string('preferred_date')->value();
+        $preferredTime = $request->string('preferred_time')->value();
 
-        // Generate a unique booking reference
-        $bookingReference = 'BK-'.strtoupper(substr(md5(uniqid()), 0, 8));
+        $timeline = match (true) {
+            $preferredDate !== '' && $preferredTime !== '' => "{$preferredDate} at {$preferredTime}",
+            $preferredDate !== '' => $preferredDate,
+            default => 'Flexible',
+        };
 
-        // Store the booking request (you can integrate with your calendar system)
-        $booking = [
-            'reference' => $bookingReference,
-            'client_name' => $parameters['client_name'],
-            'client_email' => $parameters['client_email'],
-            'preferred_date' => $parameters['preferred_date'] ?? 'To be confirmed',
-            'preferred_time' => $parameters['preferred_time'] ?? 'To be confirmed',
-            'project_type' => $parameters['project_type'] ?? 'Brand consultation',
-            'status' => 'pending_confirmation',
-            'created_at' => now()->toIso8601String(),
-        ];
+        $quote = Quote::create([
+            'name' => $request->string('client_name'),
+            'email' => $request->string('client_email'),
+            'project_type' => $request->string('project_type'),
+            'timeline' => $timeline,
+            'description' => 'Brand consultation booking requested via chat.',
+            'status' => 'pending',
+        ]);
 
-        return "Booking request submitted successfully! Reference: {$bookingReference}. We'll send a confirmation email to {$parameters['client_email']} shortly.";
+        QuoteRequested::dispatch($quote);
+
+        return "Booking request submitted successfully! We'll be in touch with {$quote->email} shortly to confirm your consultation.";
     }
 }

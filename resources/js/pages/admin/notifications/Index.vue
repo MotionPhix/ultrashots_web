@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, setLayoutProps } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { index } from '@/actions/App/Http/Controllers/Admin/NotificationController';
+
+setLayoutProps({
+    breadcrumbs: [{ title: 'Notifications', href: index.url() }],
+});
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 

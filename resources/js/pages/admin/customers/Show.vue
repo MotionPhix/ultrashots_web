@@ -2,7 +2,7 @@
 import { edit, index } from '@/routes/admin/customers';
 import { show as projectShow } from '@/routes/admin/projects';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, setLayoutProps } from '@inertiajs/vue3';
 
 interface CustomerProject {
     uuid: string;
@@ -31,9 +31,16 @@ interface CustomerRecord {
     projects: CustomerProject[];
 }
 
-defineProps<{
+const props = defineProps<{
     customer: CustomerRecord;
 }>();
+
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Customers', href: index.url() },
+        { title: props.customer.display_name, href: '' },
+    ],
+});
 
 defineOptions({ layout: AdminLayout });
 </script>

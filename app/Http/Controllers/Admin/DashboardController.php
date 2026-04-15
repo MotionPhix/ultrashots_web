@@ -2,37 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Dashboard\ClearDashboardCache;
+use App\Actions\Dashboard\GetDashboardAlerts;
+use App\Actions\Dashboard\GetDashboardStats;
+use App\Actions\Dashboard\GetPerformanceMetrics;
+use App\Actions\Dashboard\GetProjectInsights;
+use App\Actions\Dashboard\GetRecentActivity;
 use App\Http\Controllers\Controller;
-use App\Services\DashboardService;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __construct(
-        private DashboardService $dashboardService,
-    ) {}
+    public function index(
+        GetDashboardStats $getStats,
+        GetRecentActivity $getRecentActivity,
+        GetProjectInsights $getProjectInsights,
+        GetPerformanceMetrics $getPerformanceMetrics,
+        GetDashboardAlerts $getAlerts,
+    ): Response {
+        $statsData = $getStats->handle();
 
-    /**
-     * Handle the incoming request.
-     */
-    public function index(Request $request)
-    {
-        $dashboardData = $this->dashboardService->getDashboardData();
-        $notifications = $this->dashboardService->getNotifications();
-
-        return Inertia::render('admin/Dashboard', $dashboardData + [
-            'notifications' => $notifications,
+        return Inertia::render('admin/Dashboard', [
+            'stats' => $statsData['stats'],
+            'trends' => $statsData['trends'],
+            'recent_activity' => $getRecentActivity->handle(),
+            'project_insights' => $getProjectInsights->handle(),
+            'performance_metrics' => $getPerformanceMetrics->handle(),
+            'alerts' => $getAlerts->handle(),
         ]);
     }
 
-    /**
-     * Refresh dashboard data (clear cache).
-     */
-    public function refresh()
+    public function refresh(ClearDashboardCache $clearCache)
     {
-        $this->dashboardService->clearCache();
+        $clearCache->handle();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Dashboard data refreshed successfully.');
+        return redirect()->route('admin.dashboard')->with('success', 'Dashboard data refreshed.');
     }
 }

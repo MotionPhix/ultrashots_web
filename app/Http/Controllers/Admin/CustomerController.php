@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\CustomerStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpsertCustomerRequest;
 use App\Models\Customer;
@@ -85,7 +86,7 @@ class CustomerController extends Controller
 
     private function statuses(): array
     {
-        return ['active', 'inactive', 'pending'];
+        return array_column(CustomerStatus::cases(), 'value');
     }
 
     private function customerPayload(Customer $customer, bool $includeProjects = false): array

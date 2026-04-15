@@ -1,45 +1,34 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
+import { index as projectsIndex, show as projectsShow } from '@/routes/projects';
 import { Project } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { index as projectsIndex, show as projectsShow } from '@/routes/projects';
-import { computed, onMounted, ref, nextTick, onUnmounted } from 'vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import AnimatedCTAWithAvailability from '@/components/frontend/ui/AnimatedCTAWithAvailability.vue';
+import { Badge } from '@/components/ui/badge';
 
 import {
-    ArrowLeft,
-    ArrowRight,
-    ArrowUpRight,
-    Github,
-    Figma,
-    ExternalLink,
-    Sparkles,
-    Target,
-    Lightbulb,
-    Layers,
-    Zap,
-     TrendingUp,
-    Heart,
-    Maximize2,
-    ChevronLeft,
-    ChevronRight,
-    X,
-    CheckCircle2,
-    Monitor,
-    Palette,
-    PenTool,
-    Users,
-    Eye,
-    Star,
-    Quote,
-    CircleDot,
-    BarChart3,
-    Award,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Figma,
+  Github,
+  Heart,
+  Layers,
+  Maximize2,
+  Monitor,
+  Sparkles,
+  Target,
+  TrendingUp,
+  X,
+  Zap
 } from 'lucide-vue-next';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -99,30 +88,7 @@ const projectYear = computed(() => {
     return new Date().getFullYear();
 });
 
-const projectMetrics = computed(() => {
-    const results = projectData.value.results;
-    if (!results) return [];
-    if (Array.isArray(results)) {
-        return results.map((item: any) => ({
-            label: item.metric || item.label || 'Improvement',
-            value: item.value || '+30%',
-        }));
-    }
-    if (typeof results === 'string') {
-        try {
-            const parsed = JSON.parse(results);
-            if (Array.isArray(parsed)) {
-                return parsed.map((item: any) => ({
-                    label: item.metric || item.label || 'Improvement',
-                    value: item.value || '+30%',
-                }));
-            }
-        } catch {
-            return [];
-        }
-    }
-    return [];
-});
+const projectMetrics = computed(() => !!projectData.value.results);
 
 const externalLinks = computed(() => {
     const links = [];
@@ -198,10 +164,10 @@ onMounted(async () => {
 
             // Results counter
             if (resultsRef.value && isValidElement(resultsRef.value)) {
-                const anim = gsap.fromTo(resultsRef.value.children,
-                    { scale: 0.9, opacity: 0, y: 40 },
+                const anim = gsap.fromTo(resultsRef.value,
+                    { opacity: 0, y: 30 },
                     {
-                        scale: 1, opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'back.out(1.4)',
+                        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
                         scrollTrigger: { trigger: resultsRef.value, start: 'top 80%', toggleActions: 'play none none reverse' }
                     }
                 );
@@ -411,14 +377,12 @@ onUnmounted(() => {
                 <h2 class="mb-8 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                     What Problem Were We Solving?
                 </h2>
-                <p class="font-sans text-lg leading-relaxed text-muted-foreground lg:text-xl">
-                    {{ projectData.challenges }}
-                </p>
+                <div class="prose prose-lg max-w-none dark:prose-invert" v-html="projectData.challenges" />
             </div>
         </section>
 
         <!-- ===================== 6. RESULTS & IMPACT ===================== -->
-        <section v-if="projectMetrics.length > 0" ref="resultsRef" class="bg-primary text-primary-foreground">
+        <section v-if="projectMetrics" ref="resultsRef" class="bg-primary text-primary-foreground">
             <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
                 <div class="mb-12">
                     <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
@@ -429,12 +393,10 @@ onUnmounted(() => {
                 <h2 class="mb-12 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
                     The Numbers Speak
                 </h2>
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <div v-for="(metric, index) in projectMetrics" :key="index" class="group rounded-3xl border border-white/20 bg-white/10 p-8 backdrop-blur-sm transition-all hover:bg-white/15">
-                        <p class="font-display text-5xl font-bold tracking-tight lg:text-6xl">{{ metric.value }}</p>
-                        <p class="mt-3 font-sans text-sm font-medium uppercase tracking-wider text-white/70">{{ metric.label }}</p>
-                    </div>
-                </div>
+                <div
+                    class="prose prose-invert max-w-none prose-h1:text-6xl prose-h2:text-5xl prose-h3:text-4xl prose-h1:font-bold prose-h2:font-bold prose-h3:font-bold prose-h1:leading-none prose-h2:leading-none prose-h3:leading-none prose-h1:mb-2 prose-h2:mb-2 prose-h3:mb-2 prose-p:text-white/70 prose-p:text-sm prose-p:uppercase prose-p:tracking-wider prose-p:mt-0 prose-hr:border-white/20"
+                    v-html="projectData.results"
+                />
             </div>
         </section>
 
@@ -483,7 +445,7 @@ onUnmounted(() => {
                     What We Delivered
                 </h2>
                 <div v-if="projectData.solutions" class="mb-12">
-                    <p class="font-sans text-lg leading-relaxed text-muted-foreground lg:text-xl">{{ projectData.solutions }}</p>
+                    <div class="prose prose-lg max-w-none dark:prose-invert" v-html="projectData.solutions" />
                 </div>
                 <div v-if="projectData.features?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div v-for="(feature, index) in projectData.features" :key="index" class="flex items-start gap-4 rounded-2xl border border-border/50 bg-background p-6 transition-all hover:border-primary/30 hover:shadow-sm">
@@ -534,7 +496,7 @@ onUnmounted(() => {
                     </div>
                 </div>
                 <blockquote class="mb-10 font-heading text-3xl leading-tight text-foreground sm:text-4xl lg:text-5xl">
-                    "{{ projectData.client_feedback }}"
+                    <div class="prose prose-xl max-w-none dark:prose-invert" v-html="projectData.client_feedback" />
                 </blockquote>
                 <div class="flex items-center gap-4">
                     <div class="size-14 rounded-full bg-primary/10" />
@@ -557,7 +519,7 @@ onUnmounted(() => {
                         'Elevate your business',
                     ]"
                     cta-text="Get in Touch"
-                    cta-href="/contact"
+                    cta-href="/get-in-touch"
                     :switch-interval="3500"
                 />
             </div>

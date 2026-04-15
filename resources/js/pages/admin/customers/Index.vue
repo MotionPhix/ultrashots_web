@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { create, destroy, edit, index, show } from '@/routes/admin/customers';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, setLayoutProps, useForm } from '@inertiajs/vue3';
+
+setLayoutProps({
+    breadcrumbs: [{ title: 'Customers', href: index.url() }],
+});
 
 interface CustomerRow {
     id: number;

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
             $table->longText('message');
-            $table->enum('status', ['new', 'read', 'responded'])->default('new');
+            $table->string('status')->default('new');
             $table->timestamps();
 
             $table->index('status');

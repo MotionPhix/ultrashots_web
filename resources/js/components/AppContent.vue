@@ -13,7 +13,9 @@ const className = computed(() => props.class);
 
 <template>
   <SidebarInset v-if="props.variant === 'sidebar'" :class="className">
-    <slot />
+    <article class="overflow-hidden absolute h-full w-full">
+      <slot />
+    </article>
   </SidebarInset>
 
   <main

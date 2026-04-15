@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ProjectPriority;
+use App\Enums\ProjectStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -30,8 +32,8 @@ class UpsertProjectRequest extends FormRequest
             'short_description' => ['nullable', 'string'],
             'production_type' => ['nullable', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:255'],
-            'status' => ['required', Rule::in(['not_started', 'in_progress', 'completed', 'on_hold', 'cancelled'])],
-            'priority' => ['required', Rule::in(['low', 'medium', 'high', 'critical'])],
+            'status' => ['required', Rule::enum(ProjectStatus::class)],
+            'priority' => ['required', Rule::enum(ProjectPriority::class)],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date'],
             'estimated_hours' => ['nullable', 'numeric', 'min:0'],

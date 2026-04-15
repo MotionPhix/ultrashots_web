@@ -13,8 +13,6 @@ defineProps<Props>();
 // Refs
 const bgFillRef = ref<HTMLDivElement>();
 const textRef = ref<HTMLSpanElement>();
-const arrowRef = ref<any>();
-const glowRef = ref<HTMLDivElement>();
 
 // Glow position state
 const glowX = ref(50);
@@ -77,7 +75,10 @@ const handleMouseLeave = () => {
 
         <!-- Text content -->
         <span ref="textRef" class="relative z-10 flex items-center gap-3">
-            <span class="transition-transform duration-300 group-hover:-translate-x-1">{{ label }}</span>
+            <span class="transition-transform duration-300 group-hover:-translate-x-1">
+              {{ label }}
+            </span>
+
             <MoveRight
                 ref="arrowRef"
                 class="size-5 transition-all duration-300 group-hover:translate-x-2"

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ProjectPriority;
+use App\Enums\ProjectStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpsertProjectRequest;
 use App\Models\Customer;
@@ -100,12 +102,12 @@ class ProjectController extends Controller
 
     private function statuses(): array
     {
-        return ['not_started', 'in_progress', 'completed', 'on_hold', 'cancelled'];
+        return array_column(ProjectStatus::cases(), 'value');
     }
 
     private function priorities(): array
     {
-        return ['low', 'medium', 'high', 'critical'];
+        return array_column(ProjectPriority::cases(), 'value');
     }
 
     private function customerOptions(): Collection

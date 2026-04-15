@@ -31,7 +31,7 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
-import { home, register } from '@/routes';
+import { home } from '@/routes';
 import { load as loadContactForm } from '@/routes/contact';
 import { index as projectsIndex } from '@/routes/projects';
 import { index as quoteIndex } from '@/routes/quote';
@@ -41,7 +41,6 @@ import {
   Briefcase,
   FileText,
   LayoutGrid,
-  LogIn,
   Mail,
   Menu,
 } from 'lucide-vue-next';
@@ -93,11 +92,6 @@ const rightNavItems: NavItem[] = [
     title: 'Get Quote',
     href: quoteIndex().url,
     icon: FileText,
-  },
-  {
-    title: 'Get Started',
-    href: register().url,
-    icon: LogIn,
   },
 ];
 </script>

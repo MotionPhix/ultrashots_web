@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { Modal } from '@inertiaui/modal-vue'
-import { ref, nextTick, watch } from 'vue'
-import { ArrowUp, Sparkles } from 'lucide-vue-next'
 import { ModalFooter, ModalHeader, ModalRoot, ModalScrollable } from '@/components/modal'
 import {
   InputGroup,
@@ -9,11 +6,15 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from '@/components/ui/input-group'
+import { Modal } from '@inertiaui/modal-vue'
+import { AlertTriangle, ArrowUp, Sparkles } from 'lucide-vue-next'
+import { nextTick, ref, watch } from 'vue'
 
 interface Message {
   id: number
   text: string
   isUser: boolean
+  isError?: boolean
   timestamp: Date
 }
 
@@ -58,6 +59,17 @@ const sendMessage = async () => {
 
     const data = await response.json()
 
+    if (!response.ok || data.error) {
+      messages.value.push({
+        id: messages.value.length + 1,
+        text: data.message ?? "I'm having trouble connecting right now. Please try again in a moment.",
+        isUser: false,
+        isError: true,
+        timestamp: new Date(),
+      })
+      return
+    }
+
     // Save conversation ID for subsequent messages
     if (data.conversation_id) {
       conversationId.value = data.conversation_id
@@ -74,8 +86,9 @@ const sendMessage = async () => {
     console.error('Chat error:', error)
     messages.value.push({
       id: messages.value.length + 1,
-      text: 'I apologize, but I encountered an error. Please try again.',
+      text: "I'm having trouble connecting right now. Please try again in a moment.",
       isUser: false,
+      isError: true,
       timestamp: new Date(),
     })
   } finally {
@@ -139,11 +152,17 @@ watch(
             :class="
               message.isUser
                 ? 'bg-primary'
-                : 'bg-muted border border-border'
+                : message.isError
+                  ? 'bg-destructive/10 border border-destructive/30'
+                  : 'bg-muted border border-border'
             "
           >
+            <AlertTriangle
+              v-if="message.isError"
+              class="h-4 w-4 text-destructive"
+            />
             <Sparkles
-              v-if="!message.isUser"
+              v-else-if="!message.isUser"
               class="h-4 w-4 text-muted-foreground"
             />
             <span v-else class="text-xs font-semibold text-primary-foreground">U</span>
@@ -156,7 +175,9 @@ watch(
               :class="
                 message.isUser
                   ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                  : 'bg-muted text-foreground rounded-tl-sm'
+                  : message.isError
+                    ? 'bg-destructive/10 text-destructive rounded-tl-sm border border-destructive/20'
+                    : 'bg-muted text-foreground rounded-tl-sm'
               "
             >
               <p class="whitespace-pre-wrap leading-relaxed">{{ message.text }}</p>
@@ -198,7 +219,7 @@ watch(
             />
             <InputGroupAddon align="block-end">
               <div class="flex w-full items-center justify-between">
-                <p class="text-[11px] text-muted-foreground">
+                <p class="text-[11px] text-muted-foreground font-heading font-light">
                   Press Enter to send, Shift+Enter for new line
                 </p>
                 <InputGroupButton

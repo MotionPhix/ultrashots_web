@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectPriority;
+use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -75,10 +77,11 @@ class Project extends Model implements HasMedia
             'technologies' => 'array',
             'features' => 'array',
             'process_steps' => 'array',
-            'results' => 'array', // Store project results/metrics as array
             'is_featured' => 'boolean',
             'is_public' => 'boolean',
             'sort_order' => 'integer',
+            'status' => ProjectStatus::class,
+            'priority' => ProjectPriority::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -168,11 +171,11 @@ class Project extends Model implements HasMedia
     {
         return Attribute::make(
             get: function (mixed $value): int {
-                if ($this->status === 'completed') {
+                if ($this->status === ProjectStatus::Completed) {
                     return 100;
                 }
 
-                if ($this->status === 'not_started') {
+                if ($this->status === ProjectStatus::NotStarted) {
                     return 0;
                 }
 
@@ -200,11 +203,11 @@ class Project extends Model implements HasMedia
         return Attribute::make(
             get: function (mixed $value): string {
                 return match ($this->status) {
-                    'not_started' => 'gray',
-                    'in_progress' => 'blue',
-                    'on_hold' => 'yellow',
-                    'completed' => 'green',
-                    'cancelled' => 'red',
+                    ProjectStatus::NotStarted => 'gray',
+                    ProjectStatus::InProgress => 'blue',
+                    ProjectStatus::OnHold => 'yellow',
+                    ProjectStatus::Completed => 'green',
+                    ProjectStatus::Cancelled => 'red',
                     default => 'gray',
                 };
             }
@@ -219,10 +222,10 @@ class Project extends Model implements HasMedia
         return Attribute::make(
             get: function (mixed $value): string {
                 return match ($this->priority) {
-                    'low' => 'green',
-                    'medium' => 'yellow',
-                    'high' => 'orange',
-                    'urgent' => 'red',
+                    ProjectPriority::Low => 'green',
+                    ProjectPriority::Medium => 'yellow',
+                    ProjectPriority::High => 'orange',
+                    ProjectPriority::Critical => 'red',
                     default => 'gray',
                 };
             }
@@ -270,7 +273,7 @@ class Project extends Model implements HasMedia
             get: function (mixed $value): bool {
                 return $this->end_date &&
                     $this->end_date->isPast() &&
-                    $this->status !== 'completed';
+                    $this->status !== ProjectStatus::Completed;
             }
         );
     }
@@ -281,7 +284,7 @@ class Project extends Model implements HasMedia
     #[Scope]
     protected function active(Builder $query): void
     {
-        $query->whereIn('status', ['not_started', 'in_progress']);
+        $query->whereIn('status', [ProjectStatus::NotStarted, ProjectStatus::InProgress]);
     }
 
     /**
@@ -290,7 +293,7 @@ class Project extends Model implements HasMedia
     #[Scope]
     protected function completed(Builder $query): void
     {
-        $query->where('status', 'completed');
+        $query->where('status', ProjectStatus::Completed);
     }
 
     /**
@@ -352,7 +355,7 @@ class Project extends Model implements HasMedia
      * Scope a query to filter by status.
      */
     #[Scope]
-    protected function byStatus(Builder $query, string $status): void
+    protected function byStatus(Builder $query, ProjectStatus $status): void
     {
         $query->where('status', $status);
     }

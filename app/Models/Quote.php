@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\QuoteStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -33,6 +34,7 @@ class Quote extends Model implements HasMedia
     protected function casts(): array
     {
         return [
+            'status' => QuoteStatus::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -77,18 +79,18 @@ class Quote extends Model implements HasMedia
     #[Scope]
     protected function pending(Builder $query): void
     {
-        $query->where('status', 'pending');
+        $query->where('status', QuoteStatus::Pending);
     }
 
     #[Scope]
     protected function approved(Builder $query): void
     {
-        $query->where('status', 'approved');
+        $query->where('status', QuoteStatus::Accepted);
     }
 
     #[Scope]
     protected function rejected(Builder $query): void
     {
-        $query->where('status', 'rejected');
+        $query->where('status', QuoteStatus::Rejected);
     }
 }

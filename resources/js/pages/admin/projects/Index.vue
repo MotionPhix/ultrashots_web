@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { create, destroy, edit, index, show } from '@/routes/admin/projects';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { create, destroy, edit, index, show } from '@/routes/admin/projects';
+import { Head, Link, router, setLayoutProps, useForm } from '@inertiajs/vue3';
+
+setLayoutProps({
+    breadcrumbs: [{ title: 'Projects', href: index.url() }],
+});
 
 interface ProjectRow {
     uuid: string;
@@ -120,29 +126,52 @@ defineOptions({ layout: AdminLayout });
             <form class="grid gap-4 lg:grid-cols-5" @submit.prevent="applyFilters">
                 <label class="grid gap-2 text-sm lg:col-span-2">
                     <span class="font-medium">Search</span>
-                    <input v-model="filters.search" type="text" placeholder="Search projects" class="rounded-2xl border border-input bg-background px-4 py-2.5" >
+                    <Input v-model="filters.search" type="text" placeholder="Search projects" />
                 </label>
+
                 <label class="grid gap-2 text-sm">
                     <span class="font-medium">Status</span>
-                    <select v-model="filters.status" class="rounded-2xl border border-input bg-background px-4 py-2.5">
-                        <option value="">All statuses</option>
-                        <option v-for="status in statuses" :key="status" :value="status">{{ status.replace('_', ' ') }}</option>
-                    </select>
+                    <Select v-model="filters.status">
+                      <SelectTrigger class="w-full">
+                        <SelectValue placeholder="All statuses"></SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectItem :value="null">All statuses</SelectItem>
+                        <SelectItem v-for="status in statuses" :key="status" :value="status">{{ status.replace('_', ' ') }}</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </label>
+
                 <label class="grid gap-2 text-sm">
                     <span class="font-medium">Category</span>
-                    <select v-model="filters.category" class="rounded-2xl border border-input bg-background px-4 py-2.5">
-                        <option value="">All categories</option>
-                        <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
-                    </select>
+                    <Select
+                      v-model="filters.category">
+                      <SelectTrigger class="w-full">
+                        <SelectValue placeholder="All Categories"></SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectItem :value="null">All categories</SelectItem>
+                        <SelectItem v-for="category in categories" :key="category" :value="category">{{ category }}</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </label>
+
                 <label class="grid gap-2 text-sm">
                     <span class="font-medium">Priority</span>
-                    <select v-model="filters.priority" class="rounded-2xl border border-input bg-background px-4 py-2.5">
-                        <option value="">All priorities</option>
-                        <option v-for="priority in priorities" :key="priority" :value="priority">{{ priority }}</option>
-                    </select>
+                    <Select v-model="filters.priority">
+                      <SelectTrigger class="w-full">
+                        <SelectValue placeholder="All Priorities"></SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectItem :value="null">All priorities</SelectItem>
+                        <SelectItem v-for="priority in priorities" :key="priority" :value="priority">{{ priority }}</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </label>
+
                 <div class="flex gap-3 lg:col-span-5 lg:justify-end">
                     <button type="button" class="rounded-full border border-input px-4 py-2.5 text-sm font-medium" @click="resetFilters">Reset</button>
                     <button type="submit" class="rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background">Apply filters</button>

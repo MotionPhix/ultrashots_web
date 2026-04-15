@@ -11,7 +11,11 @@ import {
   ListOrdered, 
   Quote,
   Undo,
-  Redo
+  Redo,
+  Heading1,
+  Heading2,
+  Heading3,
+  Minus,
 } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 
@@ -54,7 +58,7 @@ const editor = useEditor({
       class: cn(
         'prose prose-sm sm:prose-sm focus:outline-none',
         'max-w-none p-4',
-        'prose-headings:font-bold prose-headings:text-foreground prose-h1:text-base prose-h2:text-sm prose-h3:text-sm',
+        'prose-headings:font-bold prose-headings:text-foreground prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg',
         'prose-p:text-foreground prose-p:leading-relaxed prose-p:my-1',
         'prose-strong:text-foreground prose-strong:font-semibold',
         'prose-em:text-foreground',
@@ -96,6 +100,14 @@ const toggleBold = () => {
 
 const toggleItalic = () => {
   editor.value?.chain().focus().toggleItalic().run()
+}
+
+const toggleHeading = (level: 1 | 2 | 3) => {
+  editor.value?.chain().focus().toggleHeading({ level }).run()
+}
+
+const insertHorizontalRule = () => {
+  editor.value?.chain().focus().setHorizontalRule().run()
 }
 
 const toggleBulletList = () => {
@@ -166,6 +178,44 @@ const redo = () => {
           variant="ghost"
           size="icon"
           class="h-8 w-8"
+          :class="{ 'bg-accent': editor?.isActive('heading', { level: 1 }) }"
+          @click="toggleHeading(1)"
+          title="Heading 1"
+        >
+          <Heading1 class="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          class="h-8 w-8"
+          :class="{ 'bg-accent': editor?.isActive('heading', { level: 2 }) }"
+          @click="toggleHeading(2)"
+          title="Heading 2"
+        >
+          <Heading2 class="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          class="h-8 w-8"
+          :class="{ 'bg-accent': editor?.isActive('heading', { level: 3 }) }"
+          @click="toggleHeading(3)"
+          title="Heading 3"
+        >
+          <Heading3 class="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div class="mx-1 h-6 w-px bg-border" />
+
+      <div class="flex items-center gap-1">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          class="h-8 w-8"
           :class="{ 'bg-accent': editor?.isActive('bulletList') }"
           @click="toggleBulletList"
           title="Bullet List"
@@ -193,6 +243,16 @@ const redo = () => {
           title="Quote"
         >
           <Quote class="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          class="h-8 w-8"
+          @click="insertHorizontalRule"
+          title="Divider"
+        >
+          <Minus class="h-4 w-4" />
         </Button>
       </div>
 

@@ -3,39 +3,17 @@
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\ScheduleBooking;
-use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
-use Laravel\Ai\Messages\Message;
 use Laravel\Ai\Promptable;
 use Stringable;
 
 class BrandConsultant implements Agent, Conversational, HasTools
 {
     use Promptable, RemembersConversations;
-
-    public function __construct(string $conversationId = 'default')
-    {
-        $this->conversationId = $conversationId;
-    }
-
-    /**
-     * Get the conversation messages.
-     */
-    public function messages(): iterable
-    {
-        $messages = DB::table('agent_conversation_messages')
-            ->where('conversation_id', $this->conversationId)
-            ->orderBy('created_at')
-            ->get();
-
-        return $messages->map(
-            fn ($m) => new Message($m->role, $m->content)
-        )->all();
-    }
 
     /**
      * Get the instructions that the agent should follow.

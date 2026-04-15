@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { download as downloadFile, edit, index } from '@/routes/admin/downloads';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, setLayoutProps } from '@inertiajs/vue3';
 
 interface DownloadRecord {
     uuid: string;
@@ -22,15 +22,22 @@ interface DownloadRecord {
     has_file: boolean;
 }
 
-defineProps<{
+const props = defineProps<{
     download: DownloadRecord;
 }>();
+
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Downloads', href: index.url() },
+        { title: props.download.title || 'Download', href: '' },
+    ],
+});
 
 defineOptions({ layout: AdminLayout });
 </script>
 
 <template>
-    <Head :title="download.title || 'Download'" />
+    <Head :title="props.download.title || 'Download'" />
 
     <div class="flex flex-col gap-6 p-4">
         <section class="rounded-3xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border">

@@ -1,12 +1,15 @@
-import { withInertiaModal, putConfig } from '@inertiaui/modal-vue';
+import { putConfig, withInertiaModal } from '@inertiaui/modal-vue';
 import '../css/app.css';
 
+import { initializeTheme } from '@/composables/useAppearance';
+import AdminLayout from '@/layouts/AdminLayout.vue';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { configureEcho } from '@laravel/echo-vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import type { DefineComponent } from 'vue';
-import { initializeTheme } from './composables/useAppearance';
 
 configureEcho({
     broadcaster: 'pusher',
@@ -46,6 +49,16 @@ createInertiaApp({
             `./pages/${name}.vue`,
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
+    layout: (name) => {
+        switch (true) {
+            case name === 'Welcome':
+                return null;
+            case name.startsWith('auth/'):
+                return AuthLayout;
+            case name.startsWith('settings/'):
+                return [AdminLayout, SettingsLayout];
+        }
+    },
     withApp(app) {
         app.use(createPinia());
         withInertiaModal(app);

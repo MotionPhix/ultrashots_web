@@ -206,11 +206,4 @@ Route::middleware(['auth', 'verified', 'is_admin'])
                 [DownloadController::class, 'store']
             )->name('store');
         });
-
-        // Profile Management
-        /*Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/', [\App\Http\Controllers\ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('destroy');
-  });*/
     });

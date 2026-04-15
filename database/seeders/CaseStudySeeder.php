@@ -121,11 +121,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Executed coordinated social media campaign across multiple platforms, targeting both local and international donors with tailored messaging for each audience segment.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Donor engagement rate', 'value' => '+47%'],
-                    ['metric' => 'Monthly donations', 'value' => '+MK 2.3M'],
-                    ['metric' => 'Social media reach', 'value' => '180K+'],
-                ],
+                'results' => '<h2>+47%</h2><p>Donor engagement rate</p><hr><h2>+MK 2.3M</h2><p>Monthly donations</p><hr><h2>180K+</h2><p>Social media reach</p>',
             ],
             [
                 'name' => 'Limbe Hospitality Group - Luxury Repositioning',
@@ -170,11 +166,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Rolled out new brand across all touchpoints including website, signage, staff uniforms, and marketing materials. Conducted staff training on luxury service standards.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Average booking value', 'value' => '+34%'],
-                    ['metric' => 'Luxury segment bookings', 'value' => '+127%'],
-                    ['metric' => 'Brand perception score', 'value' => '8.9/10'],
-                ],
+                'results' => '<h2>+34%</h2><p>Average booking value</p><hr><h2>+127%</h2><p>Luxury segment bookings</p><hr><h2>8.9/10</h2><p>Brand perception score</p>',
             ],
             [
                 'name' => 'AgriInvest Malawi - Digital Investment Platform',
@@ -208,11 +200,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Built responsive platform with Vue.js frontend and integrated D3.js for dynamic data visualizations. Conducted extensive user testing with target investors.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Funding secured', 'value' => 'MK 45M'],
-                    ['metric' => 'Investor sign-ups', 'value' => '340+'],
-                    ['metric' => 'Platform adoption', 'value' => '92%'],
-                ],
+                'results' => '<h2>MK 45M</h2><p>Funding secured</p><hr><h2>340+</h2><p>Investor sign-ups</p><hr><h2>92%</h2><p>Platform adoption</p>',
             ],
             [
                 'name' => 'TechHub Malawi - Startup Ecosystem Launch',
@@ -246,11 +234,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Executed multi-channel launch campaign targeting startups, mentors, and investors. Created buzz through strategic partnerships and media outreach.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Startup applications', 'value' => '247'],
-                    ['metric' => 'Media mentions', 'value' => '38'],
-                    ['metric' => 'Partner inquiries', 'value' => '+180%'],
-                ],
+                'results' => '<h2>247</h2><p>Startup applications in month 1</p><hr><h2>38</h2><p>Media mentions</p><hr><h2>+180%</h2><p>Partner inquiries</p>',
             ],
             [
                 'name' => 'Zomba Coffee Collective - Export Packaging Design',
@@ -284,11 +268,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Worked with printers to ensure color accuracy and material quality. Created 3D mockups for sales presentations to potential buyers.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Revenue increase', 'value' => '+156%'],
-                    ['metric' => 'New cafe partnerships', 'value' => '18'],
-                    ['metric' => 'Export markets', 'value' => '7 countries'],
-                ],
+                'results' => '<h2>+156%</h2><p>Revenue increase</p><hr><h2>18</h2><p>New cafe partnerships</p><hr><h2>7 countries</h2><p>Export markets</p>',
             ],
             [
                 'name' => 'LakeShore Properties - Luxury Marketing Suite',
@@ -322,11 +302,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Trained sales team on using new materials effectively in presentations. Provided guidelines for customizing materials for different buyer segments.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Sales cycle reduction', 'value' => '-78%'],
-                    ['metric' => 'Average sale price', 'value' => '+22%'],
-                    ['metric' => 'Qualified leads', 'value' => '+165%'],
-                ],
+                'results' => '<h2>-78%</h2><p>Sales cycle reduction</p><hr><h2>+22%</h2><p>Average sale price</p><hr><h2>+165%</h2><p>Qualified leads</p>',
             ],
             [
                 'name' => 'HealthFirst Malawi - Public Health Campaign',
@@ -360,11 +336,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Tracked campaign reach through radio listener surveys, clinic visit data, and SMS engagement metrics to measure behavior change.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Women reached', 'value' => '52K+'],
-                    ['metric' => 'Health literacy increase', 'value' => '+41%'],
-                    ['metric' => 'Clinic visits', 'value' => '+28%'],
-                ],
+                'results' => '<h2>52K+</h2><p>Women reached</p><hr><h2>+41%</h2><p>Health literacy increase</p><hr><h2>+28%</h2><p>Clinic visits</p>',
             ],
             [
                 'name' => 'Malawi Fashion Week - Event Rebrand',
@@ -398,11 +370,7 @@ class CaseStudySeeder extends Seeder
                         'description' => 'Coordinated all event elements from venue design to runway production, ensuring professional execution that matched luxury positioning.',
                     ],
                 ],
-                'results' => [
-                    ['metric' => 'Tickets sold', 'value' => '72 hrs'],
-                    ['metric' => 'International buyers', 'value' => '23'],
-                    ['metric' => 'Media coverage', 'value' => '14 outlets'],
-                ],
+                'results' => '<h2>72 hrs</h2><p>Sold out in</p><hr><h2>23</h2><p>International buyers</p><hr><h2>14 outlets</h2><p>Media coverage</p>',
             ],
 
         ];

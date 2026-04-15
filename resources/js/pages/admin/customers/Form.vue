@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { create as createRoute, index, store, update } from '@/routes/admin/customers';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, setLayoutProps, useForm } from '@inertiajs/vue3';
 
 interface CustomerFormData {
     uuid?: string;
@@ -55,11 +55,18 @@ const submit = () => {
     });
 };
 
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Customers', href: index.url() },
+        { title: props.customer ? 'Edit Customer' : 'New Customer', href: '' },
+    ],
+});
+
 defineOptions({ layout: AdminLayout });
 </script>
 
 <template>
-    <Head :title="customer ? 'Edit Customer' : 'New Customer'" />
+    <Head :title="props.customer ? 'Edit Customer' : 'New Customer'" />
 
     <div class="flex flex-col gap-6 p-4">
         <section class="rounded-3xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border">

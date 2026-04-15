@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
-import { X } from 'lucide-vue-next'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
+import { X } from 'lucide-vue-next';
+import type { Component } from 'vue';
 
 const props = defineProps<{
   title: string
@@ -36,14 +36,14 @@ const props = defineProps<{
       </div>
 
       <div class="flex-1 min-w-0">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+        <h2 class="text-xl lg:text-2xl font-semibold text-gray-900 dark:text-gray-100 truncate font-display">
           {{ title }}
         </h2>
 
         <slot name="description">
-          <p 
-            v-if="description" 
-            class="text-sm text-muted-foreground">
+          <p
+            v-if="description"
+            class="text-sm text-muted-foreground font-heading">
             {{ description }}
           </p>
         </slot>

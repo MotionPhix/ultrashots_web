@@ -26,6 +26,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
      *
      * @var list<string>
      */
+    protected $appends = ['full_name'];
+
     protected $fillable = [
         'password',
         'first_name',
@@ -342,6 +344,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
                 return true;
             }
         }
+
         return false;
     }
 

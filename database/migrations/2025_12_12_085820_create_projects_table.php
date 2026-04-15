@@ -21,8 +21,8 @@ return new class extends Migration
             $table->text('short_description')->nullable();
             $table->string('production_type')->nullable();
             $table->string('category')->nullable();
-            $table->enum('status', ['not_started', 'in_progress', 'completed', 'on_hold', 'cancelled'])->default('not_started');
-            $table->enum('priority', ['low', 'medium', 'high', 'critical'])->default('medium');
+            $table->string('status')->default('not_started');
+            $table->string('priority')->default('medium');
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
             $table->integer('estimated_hours')->nullable();

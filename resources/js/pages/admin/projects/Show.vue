@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { edit, index } from '@/routes/admin/projects';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { edit, index } from '@/routes/admin/projects';
+import { Head, Link, setLayoutProps } from '@inertiajs/vue3';
 
 interface GalleryImage {
     id: number;
@@ -39,9 +39,16 @@ interface ProjectRecord {
     gallery_images?: GalleryImage[];
 }
 
-defineProps<{
+const props = defineProps<{
     project: ProjectRecord;
 }>();
+
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Projects', href: index.url() },
+        { title: props.project.name, href: '' },
+    ],
+});
 
 defineOptions({ layout: AdminLayout });
 </script>
@@ -49,7 +56,7 @@ defineOptions({ layout: AdminLayout });
 <template>
     <Head :title="project.name" />
 
-    <div class="flex flex-col gap-6 p-4">
+    <div class="flex flex-col gap-6 p-4 max-w-5xl">
         <section class="rounded-3xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
@@ -109,7 +116,14 @@ defineOptions({ layout: AdminLayout });
                     </div>
                     <div class="sm:col-span-2">
                         <dt class="text-muted-foreground">Description</dt>
-                        <dd class="mt-1 whitespace-pre-line font-medium">{{ project.description || project.short_description || 'No description yet.' }}</dd>
+                        <dd class="mt-1 font-medium">
+                            <div
+                                v-if="project.description || project.short_description"
+                                class="prose prose-sm max-w-none"
+                                v-html="project.description || project.short_description"
+                            />
+                            <span v-else class="text-muted-foreground">No description yet.</span>
+                        </dd>
                     </div>
                     <div v-if="project.technologies?.length" class="sm:col-span-2">
                         <dt class="text-muted-foreground">Technologies</dt>

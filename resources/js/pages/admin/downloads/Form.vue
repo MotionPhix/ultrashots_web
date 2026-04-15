@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { create as createRoute, index, store, update } from '@/routes/admin/downloads';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, setLayoutProps, useForm } from '@inertiajs/vue3';
 
 interface DownloadFormRecord {
     uuid?: string;
@@ -60,11 +60,18 @@ const submit = () => {
     });
 };
 
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Downloads', href: index.url() },
+        { title: props.download ? 'Edit Download' : 'New Download', href: '' },
+    ],
+});
+
 defineOptions({ layout: AdminLayout });
 </script>
 
 <template>
-    <Head :title="download ? 'Edit Download' : 'New Download'" />
+    <Head :title="props.download ? 'Edit Download' : 'New Download'" />
 
     <div class="flex flex-col gap-6 p-4">
         <section class="rounded-3xl border border-sidebar-border/70 bg-background p-6 dark:border-sidebar-border">
