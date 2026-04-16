@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -121,7 +122,7 @@ const rightNavItems: NavItem[] = [
               <div
                 class="flex h-full flex-1 flex-col justify-between space-y-4 py-6">
                 <nav class="-mx-3 space-y-1">
-                  <Link
+                  <SheetClose :as="Link"
                     v-for="item in mainNavItems"
                     :key="item.title"
                     :href="item.href"
@@ -133,7 +134,7 @@ const rightNavItems: NavItem[] = [
                       class="h-5 w-5"
                     />
                     {{ item.title }}
-                  </Link>
+                  </SheetClose>
                 </nav>
 
                 <div class="flex flex-col space-y-4">

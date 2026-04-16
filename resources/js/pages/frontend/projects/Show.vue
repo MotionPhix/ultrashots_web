@@ -274,13 +274,21 @@ onUnmounted(() => {
 
     <div class="min-h-screen bg-background">
         <!-- Fixed Navigation -->
-        <div class="fixed top-12 left-16 right-0 z-20 flex items-center justify-between p-4 lg:p-6 mix-blend-difference text-white">
+        <div class="fixed top-12 left-0 sm:left-16 right-0 z-20 flex items-center justify-between p-4 lg:p-6 mix-blend-difference text-white">
             <Link :href="projectsIndex().url" class="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
                 <ArrowLeft class="size-4 transition-transform group-hover:-translate-x-1" />
                 <span>Back</span>
             </Link>
+
             <div v-if="externalLinks.length > 0" class="hidden items-center gap-2 sm:flex">
-                <Link v-for="link in externalLinks" :key="link.name" :href="link.url" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
+                <Link
+                  as="a"
+                  v-for="link in externalLinks"
+                  :key="link.name"
+                  :href="link.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
                     <component :is="link.icon" class="size-4" />
                     <span>{{ link.name }}</span>
                 </Link>
@@ -385,7 +393,7 @@ onUnmounted(() => {
         <section v-if="projectMetrics" ref="resultsRef" class="bg-primary text-primary-foreground">
             <div class="mx-auto max-w-4xl px-6 py-20 lg:py-28">
                 <div class="mb-12">
-                    <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-white/20 dark:border-black/40 bg-white/10 px-4 py-2">
                         <TrendingUp class="size-4" />
                         <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em]">Results & Impact</span>
                     </div>
@@ -394,7 +402,7 @@ onUnmounted(() => {
                     The Numbers Speak
                 </h2>
                 <div
-                    class="prose prose-invert max-w-none prose-h1:text-6xl prose-h2:text-5xl prose-h3:text-4xl prose-h1:font-bold prose-h2:font-bold prose-h3:font-bold prose-h1:leading-none prose-h2:leading-none prose-h3:leading-none prose-h1:mb-2 prose-h2:mb-2 prose-h3:mb-2 prose-p:text-white/70 prose-p:text-sm prose-p:uppercase prose-p:tracking-wider prose-p:mt-0 prose-hr:border-white/20"
+                    class="prose max-w-none prose-headings:font-display prose-headings:text-white dark:prose-headings:text-black/70 prose-h1:text-6xl prose-h2:text-5xl prose-h3:text-4xl prose-headings:font-bold prose-headings:leading-none prose-headings:mb-2 prose-p:text-white/70 prose-p:text-sm prose-p:uppercase prose-p:tracking-wider prose-p:mt-0 prose-hr:border-white/20 dark:prose-p:text-black dark:prose-hr:border-black/80"
                     v-html="projectData.results"
                 />
             </div>
