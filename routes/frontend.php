@@ -5,6 +5,7 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\DownloadController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\NewsletterController;
+use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\QuoteController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -108,3 +109,10 @@ Route::prefix('downloads')->name('public.')->group(function () {
         [DownloadController::class, 'downloadFile']
     )->name('get-download');
 });
+
+// Pages that are read rather than transacted. They are also the pages a
+// verification reviewer lands on, so they are reachable from the top nav.
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/vibora', [PageController::class, 'vibora'])->name('vibora');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');

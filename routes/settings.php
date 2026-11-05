@@ -21,4 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
+
+    // The page has always expected this route: TwoFactor.vue builds its breadcrumb
+    // from `two-factor.show`, and without the name registered Wayfinder exports no
+    // `show` at all, so the production build failed on a missing export.
+    Route::inertia('settings/two-factor', 'settings/TwoFactor')->name('two-factor.show');
 });

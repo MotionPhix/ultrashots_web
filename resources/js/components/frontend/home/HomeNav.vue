@@ -16,7 +16,9 @@ const homepageContentStore = useHomepageContentStore();
 const { mobileNavigationOpen } = storeToRefs(homepageContentStore);
 
 const navigationItems = [
+    { label: 'About', href: '/about' },
     { label: 'Work', href: projectsIndex.url() },
+    { label: 'Vibora', href: '/vibora' },
     { label: 'Services', href: quoteIndex.url() },
     { label: 'Contact', href: contactLoad.url() },
 ];
