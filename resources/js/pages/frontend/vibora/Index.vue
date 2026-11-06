@@ -41,7 +41,7 @@ const facts = [
 </script>
 
 <template>
-    <Head title="Vibora — padel for clubs and players" />
+    <Head title="Vibora" />
 
     <article class="section-frame mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <Heading

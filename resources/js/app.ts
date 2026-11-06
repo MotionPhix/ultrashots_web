@@ -15,7 +15,7 @@ configureEcho({
     broadcaster: 'pusher',
 });
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+// A browser title that reads 'About - Laravel' is a starter kit showing\n// through. The fallback is the app itself, so an unset env var cannot leak\n// the framework name onto a customer-facing page.\nconst appName = import.meta.env.VITE_APP_NAME || 'Ultrashots';
 
 putConfig({
   type: 'modal',
