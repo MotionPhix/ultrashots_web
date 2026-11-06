@@ -49,8 +49,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
 
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            // return response()->view('errors.invalid-order', status: 500);
-            return Inertia::render('NotFound')->toResponse($request);
+            // The status is the point. Rendering the page without one answered
+            // 200, so every wrong URL claimed to exist: a crawler would index
+            // them, and a missing route looked healthy to anyone checking a
+            // deploy by status code.
+            return Inertia::render('NotFound')->toResponse($request)->setStatusCode(404);
         });
 
         $exceptions->respond(function (Response $response) {

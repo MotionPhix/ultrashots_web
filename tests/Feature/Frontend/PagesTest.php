@@ -54,6 +54,12 @@ it('states what the business actually does, and its product', function () {
         );
 });
 
+it('answers an unknown url with a 404 rather than a page that claims to exist', function () {
+    $this->get('/this-page-does-not-exist')
+        ->assertNotFound()
+        ->assertInertia(fn (Assert $page) => $page->component('NotFound'));
+});
+
 it('destroys nothing by being reachable without an account', function (string $uri) {
     // A reviewer is not signed in. If any of these started redirecting to the
     // login screen, the whole point of them would be lost.
